@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# YamMaster
-=======
 # Socket IO Example
 
 <p>
@@ -36,4 +33,3 @@ This example shows how to connect and interact with socket-io backends.
 ## 📝 Notes
 
 React Native provides a socket-io compatible WebSocket implementation, some people get tripped up on the https requirement so this example helps to clarify how you can get it running.
->>>>>>> 4003ad2 (Cours_20240415)
