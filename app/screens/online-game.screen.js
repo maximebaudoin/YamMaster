@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { StyleSheet, View, Button, Text } from "react-native";
+import { StyleSheet, View, Button, Text, SafeAreaView } from "react-native";
 import { SocketContext } from '../contexts/socket.context';
 import OnlineGameController from "../controllers/online-game.controller";
 
@@ -7,7 +7,7 @@ export default function OnlineGameScreen({ navigation }) {
     const socket = useContext(SocketContext);
     
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             {!socket && (
                 <>
                     <Text style={styles.paragraph}>
@@ -21,7 +21,7 @@ export default function OnlineGameScreen({ navigation }) {
             {socket && (
                 <OnlineGameController />
             )}
-        </View>
+        </SafeAreaView>
     );
 }
 

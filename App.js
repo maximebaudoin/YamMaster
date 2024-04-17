@@ -6,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SocketContext, socket } from './app/contexts/socket.context';
 import OnlineGameScreen from './app/screens/online-game.screen';
 import VsBotGameScreen from './app/screens/vs-bot-game.screen';
+import TestScreen from './app/screens/test.screen';
 
 const Stack = createStackNavigator();
 
@@ -17,6 +18,7 @@ function App() {
             <NavigationContainer>
                 <Stack.Navigator initialRouteName="HomeScreen">
                     <Stack.Screen name="HomeScreen" component={HomeScreen} />
+                    <Stack.Screen name="TestScreen" component={TestScreen} />
                     <Stack.Screen name="OnlineGameScreen" component={OnlineGameScreen} />
                     <Stack.Screen name="VsBotGameScreen" component={VsBotGameScreen} />
                 </Stack.Navigator>
