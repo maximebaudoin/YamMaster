@@ -13,7 +13,7 @@ const OpponentTimer = () => {
     }, []);
     return (
         <View style={styles.opponentTimerContainer}>
-            <Text>Timer: {opponentTimer}</Text>
+            <Text style={styles.paragraph}>Timer: {opponentTimer}</Text>
         </View>
     );
 };
@@ -24,7 +24,9 @@ const styles = StyleSheet.create({
     playerTimerContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: "lightgrey"
+        alignItems: 'center'
+    },
+    paragraph: {
+        color: 'white'
     }
 });

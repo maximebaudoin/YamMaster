@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     dice: {
         width: 40,
         height: 40,
-        backgroundColor: "lightblue",
+        backgroundColor: "white",
         borderRadius: 5,
         justifyContent: "center",
         alignItems: "center",

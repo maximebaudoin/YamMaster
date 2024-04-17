@@ -39,9 +39,7 @@ const styles = StyleSheet.create({
     deckOpponentContainer: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "center",
-        borderBottomWidth: 1,
-        borderColor: "black"
+        alignItems: "center"
     },
     diceContainer: {
         flexDirection: "row",

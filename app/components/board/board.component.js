@@ -8,7 +8,7 @@ import PlayerDeck from "./decks/player-deck.component";
 const OpponentInfos = () => {
     return (
         <View style={styles.opponentInfosContainer}>
-            <Text>Opponent infos</Text>
+            <Text style={styles.paragraph}>Opponent infos</Text>
         </View>
     );
 };
@@ -16,7 +16,7 @@ const OpponentInfos = () => {
 const OpponentScore = () => {
     return (
         <View style={styles.opponentScoreContainer}>
-            <Text>Score: </Text>
+            <Text style={styles.paragraph}>Score: </Text>
         </View>
     );
 };
@@ -25,7 +25,7 @@ const Grid = () => {
 
     return (
         <View style={styles.gridContainer}>
-            <Text>Grid</Text>
+            <Text style={styles.paragraph}>Grid</Text>
         </View>
     );
 };
@@ -34,7 +34,7 @@ const Choices = () => {
 
     return (
         <View style={styles.choicesContainer}>
-            <Text>Choices</Text>
+            <Text style={styles.paragraph}>Choices</Text>
         </View>
     );
 };
@@ -42,7 +42,7 @@ const Choices = () => {
 const PlayerInfos = () => {
     return (
         <View style={styles.playerInfosContainer}>
-            <Text>Player Infos</Text>
+            <Text style={styles.paragraph}>Player Infos</Text>
         </View>
     );
 };
@@ -51,7 +51,7 @@ const PlayerScore = () => {
 
     return (
         <View style={styles.playerScoreContainer}>
-            <Text>PlayerScore</Text>
+            <Text style={styles.paragraph}>PlayerScore</Text>
         </View>
     );
 };
@@ -98,24 +98,18 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: 'row',
-        width: '100%',
-        borderBottomWidth: 1,
-        borderColor: 'black',
+        width: '100%'
     },
     opponentInfosContainer: {
         flex: 7,
         justifyContent: 'center',
-        alignItems: 'center',
-        borderRightWidth: 1,
-        borderColor: 'black',
-        backgroundColor: "lightgrey"
+        alignItems: 'center'
     },
     opponentTimerScoreContainer: {
         flex: 3,
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: "lightgrey"
+        alignItems: 'center'
     },
     opponentTimerContainer: {
         flex: 1,
@@ -130,50 +124,44 @@ const styles = StyleSheet.create({
     deckOpponentContainer: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "center",
-        borderBottomWidth: 1,
-        borderColor: "black"
+        alignItems: "center"
     },
     gridContainer: {
         flex: 7,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRightWidth: 1,
-        borderColor: 'black',
+        backgroundColor: 'rgba(255,255,255,0.15)'
     },
     choicesContainer: {
         flex: 3,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.1)'
     },
     deckPlayerContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        borderColor: 'black',
+        alignItems: 'center'
     },
     playerInfosContainer: {
         flex: 7,
         justifyContent: 'center',
-        alignItems: 'center',
-        borderRightWidth: 1,
-        borderColor: 'black',
-        backgroundColor: "lightgrey"
+        alignItems: 'center'
     },
     playerTimerScoreContainer: {
         flex: 3,
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: "lightgrey"
+        alignItems: 'center'
     },
     playerScoreContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: "lightgrey"
+        alignItems: 'center'
     },
+    paragraph: {
+        color: 'white'
+    }
 });
 
 export default Board;

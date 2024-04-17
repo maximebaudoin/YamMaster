@@ -14,7 +14,7 @@ const PlayerTimer = () => {
 
     return (
         <View style={styles.playerTimerContainer}>
-            <Text>Timer: {playerTimer}</Text>
+            <Text style={styles.paragraph}>Timer: {playerTimer}</Text>
         </View>
     );
 };
@@ -25,7 +25,9 @@ const styles = StyleSheet.create({
     playerTimerContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: "lightgrey"
+        alignItems: 'center'
+    },
+    paragraph: {
+        color: 'white'
     }
 });

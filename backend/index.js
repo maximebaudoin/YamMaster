@@ -21,8 +21,10 @@ const updateClientsViewTimers = (game) => {
 }
 
 const updateClientsViewDecks = (game) => {
-    game.player1Socket.emit('game.deck.view-state', GameService.send.forPlayer.deckViewState('player:1', game.gameState));
-    game.player2Socket.emit('game.deck.view-state', GameService.send.forPlayer.deckViewState('player:2', game.gameState));
+    setTimeout(() => {
+        game.player1Socket.emit('game.deck.view-state', GameService.send.forPlayer.deckViewState('player:1', game.gameState));
+        game.player2Socket.emit('game.deck.view-state', GameService.send.forPlayer.deckViewState('player:2', game.gameState));
+    }, 200);
 }
 
 const newPlayerInQueue = (socket) => {
@@ -61,10 +63,6 @@ const createGame = (player1Socket, player2Socket) => {
     const gameIndex = GameService.utils.findGameIndexById(games, newGame.idGame);
     const game = games[gameIndex];
 
-    // Envoi des données de la partie aux joueurs
-    game.player1Socket.emit('game.start', GameService.send.forPlayer.viewGameState('player:1', game));
-    game.player2Socket.emit('game.start', GameService.send.forPlayer.viewGameState('player:2', game));
-
     // Lancement de l'horloge
     const gameInterval = setInterval(() => {
         game.gameState.timer--;
@@ -80,6 +78,10 @@ const createGame = (player1Socket, player2Socket) => {
         // Envoi des données de l'horloge aux joueurs
         updateClientsViewTimers(game);
     }, 1000);
+
+    // Envoi des données de la partie aux joueurs
+    game.player1Socket.emit('game.start', GameService.send.forPlayer.viewGameState('player:1', game));
+    game.player2Socket.emit('game.start', GameService.send.forPlayer.viewGameState('player:2', game));
 
     updateClientsViewDecks(game);
 
@@ -101,6 +103,7 @@ const rollDicesInGame = (socketId) => {
     const rolledDices = GameService.dices.roll(game.gameState.deck.dices);
     game.gameState.deck.dices = rolledDices;
 
+    // Dernier tour, on bloque tout
     if(game.gameState.deck.rollsCounter >= game.gameState.deck.rollsMaximum) {
         GameService.dices.lockEveryDice(game.gameState.deck.dices);
         game.gameState.timer = 5;

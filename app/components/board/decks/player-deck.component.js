@@ -85,9 +85,7 @@ const styles = StyleSheet.create({
     deckPlayerContainer: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "center",
-        borderBottomWidth: 1,
-        borderColor: "black"
+        alignItems: "center"
     },
     rollInfoContainer: {
         marginBottom: 10,
