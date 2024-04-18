@@ -12,7 +12,12 @@ export default function OnlineGameScreen({ navigation }) {
             style={styles.container}
             colors={['#1D74D0', '#002972']}
         >
-            <SafeAreaView >
+            <SafeAreaView style={{
+                flex: 1,
+                alignSelf: 'stretch',
+                alignItems: "center",
+                justifyContent: "center",
+            }}>
                 {!socket && (
                     <>
                         <Text style={styles.paragraph}>
@@ -34,8 +39,6 @@ export default function OnlineGameScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "lightgrey",
-        alignItems: "center",
-        justifyContent: "center",
+        alignSelf: 'stretch',
     }
 });

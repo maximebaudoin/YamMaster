@@ -1,4 +1,43 @@
 const TURN_DURATION = 30;
+const NUMBER_OF_DICE = 5;
+
+const GRID_INIT = [
+    [
+        { viewContent: '1', id: 'brelan1', owner: null, canBeChecked: false },
+        { viewContent: '3', id: 'brelan3', owner: null, canBeChecked: false },
+        { viewContent: 'Défi', id: 'defi', owner: null, canBeChecked: false },
+        { viewContent: '4', id: 'brelan4', owner: null, canBeChecked: false },
+        { viewContent: '6', id: 'brelan6', owner: null, canBeChecked: false },
+    ],
+    [
+        { viewContent: '2', id: 'brelan2', owner: null, canBeChecked: false },
+        { viewContent: 'Carré', id: 'carre', owner: null, canBeChecked: false },
+        { viewContent: 'Sec', id: 'sec', owner: null, canBeChecked: false },
+        { viewContent: 'Full', id: 'full', owner: null, canBeChecked: false },
+        { viewContent: '5', id: 'brelan5', owner: null, canBeChecked: false },
+    ],
+    [
+        { viewContent: '≤8', id: 'moinshuit', owner: null, canBeChecked: false },
+        { viewContent: 'Full', id: 'full', owner: null, canBeChecked: false },
+        { viewContent: 'Yam', id: 'yam', owner: null, canBeChecked: false },
+        { viewContent: 'Défi', id: 'defi', owner: null, canBeChecked: false },
+        { viewContent: 'Suite', id: 'suite', owner: null, canBeChecked: false },
+    ],
+    [
+        { viewContent: '6', id: 'brelan6', owner: null, canBeChecked: false },
+        { viewContent: 'Sec', id: 'sec', owner: null, canBeChecked: false },
+        { viewContent: 'Suite', id: 'suite', owner: null, canBeChecked: false },
+        { viewContent: '≤8', id: 'moinshuit', owner: null, canBeChecked: false },
+        { viewContent: '1', id: 'brelan1', owner: null, canBeChecked: false },
+    ],
+    [
+        { viewContent: '3', id: 'brelan3', owner: null, canBeChecked: false },
+        { viewContent: '2', id: 'brelan2', owner: null, canBeChecked: false },
+        { viewContent: 'Carré', id: 'carre', owner: null, canBeChecked: false },
+        { viewContent: '5', id: 'brelan5', owner: null, canBeChecked: false },
+        { viewContent: '4', id: 'brelan4', owner: null, canBeChecked: false },
+    ]
+];
 
 const DECK_INIT = {
     dices: [
@@ -8,9 +47,32 @@ const DECK_INIT = {
         { id: 4, value: '', locked: true },
         { id: 5, value: '', locked: true },
     ],
-    rollsCounter: 1,
+    rollsCounter: 0,
     rollsMaximum: 3
 };
+
+const CHOICES_INIT = {
+    isDefi: false,
+    isSec: false,
+    idSelectedChoice: null,
+    availableChoices: [],
+};
+
+const ALL_COMBINATIONS = [
+    { value: 'Brelan1', id: 'brelan1' },
+    { value: 'Brelan2', id: 'brelan2' },
+    { value: 'Brelan3', id: 'brelan3' },
+    { value: 'Brelan4', id: 'brelan4' },
+    { value: 'Brelan5', id: 'brelan5' },
+    { value: 'Brelan6', id: 'brelan6' },
+    { value: 'Full', id: 'full' },
+    { value: 'Carré', id: 'carre' },
+    { value: 'Yam', id: 'yam' },
+    { value: 'Suite', id: 'suite' },
+    { value: '≤8', id: 'moinshuit' },
+    { value: 'Sec', id: 'sec' },
+    { value: 'Défi', id: 'defi' }
+];
 
 const GAME_INIT = {
     gameState: {
@@ -18,8 +80,8 @@ const GAME_INIT = {
         timer: TURN_DURATION,
         player1Score: 0,
         player2Score: 0,
-        grid: [],
-        choices: {},
+        grid: GRID_INIT,
+        choices: CHOICES_INIT,
         deck: DECK_INIT
     }
 };
@@ -37,6 +99,12 @@ const GameService = {
         deck: () => {
             return { ...DECK_INIT };
         },
+        choices: () => {
+            return { ...CHOICES_INIT };
+        },
+        grid: () => {
+            return { ...GRID_INIT };
+        }
     },
     send: {
         forPlayer: {
@@ -71,6 +139,22 @@ const GameService = {
                     dices: gameState.deck.dices
                 };
                 return deckViewState;
+            },
+            choicesViewState: (playerKey, gameState) => {
+                const choicesViewState = {
+                    displayChoices: true,
+                    canMakeChoice: playerKey === gameState.currentTurn,
+                    idSelectedChoice: gameState.choices.idSelectedChoice,
+                    availableChoices: gameState.choices.availableChoices
+                }
+                return choicesViewState;
+            },
+            gridViewState: (playerKey, gameState) => {
+                return {
+                    displayGrid: true,
+                    canSelectCells: (playerKey === gameState.currentTurn) && (gameState.choices.availableChoices.length > 0),
+                    grid: gameState.grid
+                };
             },
             viewQueueState: () => {
                 return {
@@ -125,6 +209,109 @@ const GameService = {
         },
         lockOneDice: (idDice) => {
 
+        }
+    },
+    choices: {
+        findCombinations: (dices, isDefi, isSec) => {
+
+            const allCombinations = ALL_COMBINATIONS;
+
+            // Tableau des objets 'combinations' disponibles parmi 'ALL_COMBINATIONS'
+            const availableCombinations = [];
+
+            // Tableau pour compter le nombre de dés de chaque valeur (de 1 à 6)
+            const counts = Array(7).fill(0);
+
+            let hasPair = false; // check: paire
+            let threeOfAKindValue = null; // check: valeur brelan
+            let hasThreeOfAKind = false; // check: brelan
+            let hasFourOfAKind = false; // check: carré
+            let hasFiveOfAKind = false; // check: yam
+            let hasStraight = false; // check: suite
+            let isLessThanEqual8 = false;
+            let sum = 0; // sum of dices
+
+            for (let i = 0; i < dices.length; i++) {
+                counts[dices[i].value]++;
+                sum += dices[i].value;
+            }
+
+            if (counts.includes(0) === 1) {
+                hasStraight = true;
+            }
+
+            for (let i = 1; i < counts.length; i++) {
+                if (counts[i] === 2) {
+                    hasPair = true;
+                }
+                if (counts[i] >= 3) {
+                    threeOfAKindValue = i;
+                    hasThreeOfAKind = true;
+                }
+                if (counts[i] >= 4) {
+                    hasFourOfAKind = true;
+                }
+                if (counts[i] === 5) {
+                    hasFiveOfAKind = true;
+                }
+            }
+
+            isLessThanEqual8 = sum <= 8;
+
+            const sortedValues = dices.map(dice => parseInt(dice.value)).sort((a, b) => a - b);
+            hasStraight = sortedValues.every((value, index) => index === 0 || value === sortedValues[index - 1] + 1);
+
+            // return available combinations
+            allCombinations.forEach(combination => {
+                if (
+                    (combination.id.includes('brelan') && hasThreeOfAKind && parseInt(combination.id.slice(-1)) === threeOfAKindValue) ||
+                    (combination.id === 'full' && hasPair && hasThreeOfAKind) ||
+                    (combination.id === 'carre' && hasFourOfAKind) ||
+                    (combination.id === 'yam' && hasFiveOfAKind) ||
+                    (combination.id === 'suite' && hasStraight) ||
+                    (combination.id === 'moinshuit' && isLessThanEqual8) ||
+                    (combination.id === 'defi' && isDefi)
+                ) {
+                    availableCombinations.push(combination);
+                }
+            });
+
+            const notOnlyBrelan = availableCombinations.some(combination => !combination.id.includes('brelan'));
+
+            if (isSec && availableCombinations.length > 0 && notOnlyBrelan) {
+                availableCombinations.push(allCombinations.find(combination => combination.id === 'sec'));
+            }
+
+            return availableCombinations;
+        }
+    },
+    grid: {
+        resetcanBeCheckedCells: (grid) => {
+            const updatedGrid = grid.map(row => 
+                row.map(cell => ({
+                    ...cell,
+                    canBeChecked: false
+                }))
+            );
+            return updatedGrid;
+        },
+        updateGridAfterSelectingChoice: (idSelectedChoice, grid) => {
+            const updatedGrid = grid.map(row => 
+                row.map(cell => ({
+                    ...cell,
+                    canBeChecked: cell.id === idSelectedChoice && cell.owner === null
+                }))
+            );
+            return updatedGrid;
+        },
+        selectCell: (idCell, rowIndex, cellIndex, currentTurn, grid) => {
+            const updatedGrid = grid.map((row, _rowIndex) =>
+                row.map((cell, _cellIndex) => ({
+                    ...cell,
+                    owner: _rowIndex === rowIndex && _cellIndex === cellIndex && cell.id === idCell ? currentTurn : cell.owner
+                }))
+            );
+            return updatedGrid;
         }
     },
     utils: {
