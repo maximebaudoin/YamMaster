@@ -6,6 +6,8 @@ import OpponentDeck from "./decks/opponent-deck.component";
 import PlayerDeck from "./decks/player-deck.component";
 import Choices from "./choices/choices.component";
 import Grid from "./grid/grid.component";
+import OpponentScore from "./scores/opponent-score.component";
+import PlayerScore from "./scores/player-score.component";
 
 const OpponentInfos = () => {
     return (
@@ -15,27 +17,10 @@ const OpponentInfos = () => {
     );
 };
 
-const OpponentScore = () => {
-    return (
-        <View style={styles.opponentScoreContainer}>
-            <Text style={styles.paragraph}>Score: </Text>
-        </View>
-    );
-};
-
 const PlayerInfos = () => {
     return (
         <View style={styles.playerInfosContainer}>
             <Text style={styles.paragraph}>Player Infos</Text>
-        </View>
-    );
-};
-
-const PlayerScore = () => {
-
-    return (
-        <View style={styles.playerScoreContainer}>
-            <Text style={styles.paragraph}>PlayerScore</Text>
         </View>
     );
 };

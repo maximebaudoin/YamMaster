@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, LayoutAnimation } from "react-native";
 import { SocketContext } from "../../../contexts/socket.context";
 import Dice from "./dice.component";
 
@@ -8,11 +8,19 @@ const OpponentDeck = () => {
     const [displayOpponentDeck, setDisplayOpponentDeck] = useState(false);
     const [opponentDices, setOpponentDices] = useState(Array(5).fill({ value: "", locked: false }));
 
+    const layoutAnimConfig = {
+        duration: 150,
+        update: {
+            type: LayoutAnimation.Types.easeInEaseOut,
+        }
+    };
+
     useEffect(() => {
         socket.on("game.deck.view-state", (data) => {
             setDisplayOpponentDeck(data['displayOpponentDeck']);
             if (data['displayOpponentDeck']) {
-                setOpponentDices(data['dices']);
+                setOpponentDices(data['dices'].sort((a, b) => a.locked ? -1 : 1));
+                LayoutAnimation.configureNext(layoutAnimConfig);
             }
         });
     }, []);

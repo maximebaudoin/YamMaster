@@ -1,41 +1,41 @@
-const TURN_DURATION = 30;
-const NUMBER_OF_DICE = 5;
+const TURN_DURATION = 40;
+const TOTAL_TOKENS_PER_PLAYER = 3;
 
 const GRID_INIT = [
     [
-        { viewContent: '1', id: 'brelan1', owner: null, canBeChecked: false },
-        { viewContent: '3', id: 'brelan3', owner: null, canBeChecked: false },
-        { viewContent: 'Défi', id: 'defi', owner: null, canBeChecked: false },
-        { viewContent: '4', id: 'brelan4', owner: null, canBeChecked: false },
-        { viewContent: '6', id: 'brelan6', owner: null, canBeChecked: false },
+        { viewContent: '1', id: 'brelan1', owner: null, canBeChecked: true },
+        { viewContent: '3', id: 'brelan3', owner: null, canBeChecked: true },
+        { viewContent: 'Défi', id: 'defi', owner: null, canBeChecked: true },
+        { viewContent: '4', id: 'brelan4', owner: null, canBeChecked: true },
+        { viewContent: '6', id: 'brelan6', owner: null, canBeChecked: true },
     ],
     [
-        { viewContent: '2', id: 'brelan2', owner: null, canBeChecked: false },
-        { viewContent: 'Carré', id: 'carre', owner: null, canBeChecked: false },
-        { viewContent: 'Sec', id: 'sec', owner: null, canBeChecked: false },
-        { viewContent: 'Full', id: 'full', owner: null, canBeChecked: false },
-        { viewContent: '5', id: 'brelan5', owner: null, canBeChecked: false },
+        { viewContent: '2', id: 'brelan2', owner: null, canBeChecked: true },
+        { viewContent: 'Carré', id: 'carre', owner: null, canBeChecked: true },
+        { viewContent: 'Sec', id: 'sec', owner: null, canBeChecked: true },
+        { viewContent: 'Full', id: 'full', owner: null, canBeChecked: true },
+        { viewContent: '5', id: 'brelan5', owner: null, canBeChecked: true },
     ],
     [
-        { viewContent: '≤8', id: 'moinshuit', owner: null, canBeChecked: false },
-        { viewContent: 'Full', id: 'full', owner: null, canBeChecked: false },
-        { viewContent: 'Yam', id: 'yam', owner: null, canBeChecked: false },
-        { viewContent: 'Défi', id: 'defi', owner: null, canBeChecked: false },
-        { viewContent: 'Suite', id: 'suite', owner: null, canBeChecked: false },
+        { viewContent: '≤8', id: 'moinshuit', owner: null, canBeChecked: true },
+        { viewContent: 'Full', id: 'full', owner: null, canBeChecked: true },
+        { viewContent: 'Yam', id: 'yam', owner: null, canBeChecked: true },
+        { viewContent: 'Défi', id: 'defi', owner: null, canBeChecked: true },
+        { viewContent: 'Suite', id: 'suite', owner: null, canBeChecked: true },
     ],
     [
-        { viewContent: '6', id: 'brelan6', owner: null, canBeChecked: false },
-        { viewContent: 'Sec', id: 'sec', owner: null, canBeChecked: false },
-        { viewContent: 'Suite', id: 'suite', owner: null, canBeChecked: false },
-        { viewContent: '≤8', id: 'moinshuit', owner: null, canBeChecked: false },
-        { viewContent: '1', id: 'brelan1', owner: null, canBeChecked: false },
+        { viewContent: '6', id: 'brelan6', owner: null, canBeChecked: true },
+        { viewContent: 'Sec', id: 'sec', owner: null, canBeChecked: true },
+        { viewContent: 'Suite', id: 'suite', owner: null, canBeChecked: true },
+        { viewContent: '≤8', id: 'moinshuit', owner: null, canBeChecked: true },
+        { viewContent: '1', id: 'brelan1', owner: null, canBeChecked: true },
     ],
     [
-        { viewContent: '3', id: 'brelan3', owner: null, canBeChecked: false },
-        { viewContent: '2', id: 'brelan2', owner: null, canBeChecked: false },
-        { viewContent: 'Carré', id: 'carre', owner: null, canBeChecked: false },
-        { viewContent: '5', id: 'brelan5', owner: null, canBeChecked: false },
-        { viewContent: '4', id: 'brelan4', owner: null, canBeChecked: false },
+        { viewContent: '3', id: 'brelan3', owner: null, canBeChecked: true },
+        { viewContent: '2', id: 'brelan2', owner: null, canBeChecked: true },
+        { viewContent: 'Carré', id: 'carre', owner: null, canBeChecked: true },
+        { viewContent: '5', id: 'brelan5', owner: null, canBeChecked: true },
+        { viewContent: '4', id: 'brelan4', owner: null, canBeChecked: true },
     ]
 ];
 
@@ -77,12 +77,14 @@ const ALL_COMBINATIONS = [
 const GAME_INIT = {
     gameState: {
         currentTurn: 'player:1',
-        timer: TURN_DURATION,
+        timer: null,
         player1Score: 0,
         player2Score: 0,
-        grid: GRID_INIT,
-        choices: CHOICES_INIT,
-        deck: DECK_INIT
+        player1UsedTokens: 0,
+        player2UsedTokens: 0,
+        winnerPlayer: null,
+        choices: {},
+        deck: {}
     }
 };
 
@@ -94,6 +96,8 @@ const GameService = {
             const game = { ...GAME_INIT };
             game['gameState']['timer'] = TURN_DURATION;
             game['gameState']['deck'] = { ...DECK_INIT };
+            game['gameState']['choices'] = { ...CHOICES_INIT };
+            game['gameState']['grid'] = [...GRID_INIT];
             return game;
         },
         deck: () => {
@@ -103,7 +107,7 @@ const GameService = {
             return { ...CHOICES_INIT };
         },
         grid: () => {
-            return { ...GRID_INIT };
+            return [...GRID_INIT];
         }
     },
     send: {
@@ -113,6 +117,7 @@ const GameService = {
                 return {
                     inQueue: false,
                     inGame: true,
+                    inEndGame: false,
                     idPlayer:
                         (playerKey === 'player:1')
                             ? game.player1Socket.id
@@ -133,7 +138,7 @@ const GameService = {
                 const deckViewState = {
                     displayPlayerDeck: gameState.currentTurn === playerKey,
                     displayOpponentDeck: gameState.currentTurn !== playerKey,
-                    displayRollButton: gameState.deck.rollsCounter <= gameState.deck.rollsMaximum,
+                    displayRollButton: gameState.deck.rollsCounter < gameState.deck.rollsMaximum,
                     rollsCounter: gameState.deck.rollsCounter,
                     rollsMaximum: gameState.deck.rollsMaximum,
                     dices: gameState.deck.dices
@@ -156,6 +161,15 @@ const GameService = {
                     grid: gameState.grid
                 };
             },
+            scoresViewState: (playerKey, gameState) => {
+                return playerKey === 'player:1' ? {
+                    playerScore: gameState.player1Score,
+                    opponentScore: gameState.player2Score
+                } : {
+                    playerScore: gameState.player2Score,
+                    opponentScore: gameState.player1Score
+                };
+            },
             viewQueueState: () => {
                 return {
                     inQueue: true,
@@ -167,6 +181,16 @@ const GameService = {
                     inQueue: false,
                     inGame: false,
                 };
+            },
+            gameEndState: (playerKey, gameState) => {
+                return {
+                    inQueue: false,
+                    inGame: true,
+                    inEndGame: true,
+                    win: playerKey === gameState.winnerPlayer,
+                    loose: playerKey !== gameState.winnerPlayer,
+                    endScore: GameService.send.forPlayer.scoresViewState(playerKey, gameState)
+                }
             }
         }
     },
@@ -287,16 +311,16 @@ const GameService = {
     },
     grid: {
         resetcanBeCheckedCells: (grid) => {
-            const updatedGrid = grid.map(row => 
+            const updatedGrid = grid.map(row =>
                 row.map(cell => ({
                     ...cell,
-                    canBeChecked: false
+                    canBeChecked: true
                 }))
             );
             return updatedGrid;
         },
         updateGridAfterSelectingChoice: (idSelectedChoice, grid) => {
-            const updatedGrid = grid.map(row => 
+            const updatedGrid = grid.map(row =>
                 row.map(cell => ({
                     ...cell,
                     canBeChecked: cell.id === idSelectedChoice && cell.owner === null
@@ -314,8 +338,109 @@ const GameService = {
             return updatedGrid;
         }
     },
+    score: {
+        checkAndUpdateScore: (grid) => {
+            const rows = grid.length;
+            const cols = grid[0].length;
+
+            let points = {
+                player1Score: 0,
+                player2Score: 0
+            };
+            let endGamePlayerKey = null;
+
+            const checkPoints = (array, unique = false) => {
+                const maxValue = unique ? array.length - 2 : Math.min(3, array.length)
+                for (let z = 0; z < maxValue; z++) {
+                    let current = array[z];
+                    if (current === 0 || current === null) {
+                        continue;
+                    }
+
+                    if (unique) {
+                        for (let index = 0; index < array.length - z - 2; index++) {
+                            const tmpArray = array.slice(z, array.length - index);
+                            if (GameService.utils.allEquals(tmpArray)) countPoints(tmpArray.length, current);
+                        }
+                    } else {
+                        const tmpArray = array.slice(0, array.length - z);
+                        if (GameService.utils.allEquals(tmpArray)) countPoints(tmpArray.length, current);
+                    }
+                }
+            }
+
+            const countPoints = (count, player) => {
+                const playerPointsKey = player === 'player:1' ? 'player1Score' : 'player2Score';
+                if (count === 3) {
+                    points[playerPointsKey]++;
+                }
+                if (count === 5) {
+                    endGamePlayerKey = player;
+                }
+            }
+
+            for (let row = 0; row < rows; row++) {
+                let pions = [];
+                for (let col = 0; col < cols; col++) {
+                    pions.push(grid[row][col].owner);
+                }
+                checkPoints(pions, true);
+            }
+
+            for (let col = 0; col < cols; col++) {
+                let pions = [];
+                for (let row = 0; row < rows; row++) {
+                    pions.push(grid[row][col].owner);
+                }
+                checkPoints(pions, true);
+            }
+
+            for (let row = 0; row <= rows - 3; row++) {
+                for (let col = 0; col <= cols - 3; col++) {
+                    let pions = [];
+                    for (let i = 0; i < Math.min(5, cols - col, rows - row); i++) {
+                        pions.push(grid[row + i][col + i].owner);
+                    }
+                    checkPoints(pions);
+                }
+            }
+
+            for (let row = 0; row <= rows - 3; row++) {
+                for (let col = 2; col < cols; col++) {
+                    let pions = [];
+                    for (let i = 0; i < Math.min(5, col, rows - row); i++) {
+                        pions.push(grid[row + i][col - i].owner);
+                    }
+                    checkPoints(pions);
+                }
+            }
+
+            return {
+                ...points,
+                endGamePlayerKey
+            };
+        }
+    },
+    gameTokens: {
+        updateGameTokensAfterUsedOne: (gameState) => {
+            if (gameState.currentTurn == 'player:1') {
+                gameState.player1UsedTokens++;
+            } else {
+                gameState.player2UsedTokens++;
+            }
+            return gameState;
+        },
+        playerHasUsedAllTheirTokens: (gameState) => {
+            if (gameState.player1UsedTokens >= TOTAL_TOKENS_PER_PLAYER) {
+                return 'player:1';
+            }
+            if (gameState.player1UsedTokens >= TOTAL_TOKENS_PER_PLAYER) {
+                return 'player:2';
+            }
+            return false;
+        }
+    },
     utils: {
-        // Return game index in global games array by id
         findGameIndexById: (games, idGame) => {
             for (let i = 0; i < games.length; i++) {
                 if (games[i].idGame === idGame) {
@@ -324,7 +449,6 @@ const GameService = {
             }
             return -1;
         },
-        // Return game index in global games array by id
         findPlayerIndexInQueueBySocketId: (queue, idSocket) => {
             for (let i = 0; i < queue.length; i++) {
                 if (queue[i].id === idSocket) {
@@ -348,6 +472,9 @@ const GameService = {
                 }
             }
             return -1;
+        },
+        allEquals: (array) => {
+            return array.every(val => val === array[0]);
         }
     }
 }

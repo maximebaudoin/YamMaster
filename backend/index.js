@@ -41,6 +41,13 @@ const updateClientsViewGrid = (game) => {
     }, 200);
 }
 
+const updateClientsViewScores = (game) => {
+    setTimeout(() => {
+        game.player1Socket.emit('game.scores.view-state', GameService.send.forPlayer.scoresViewState('player:1', game.gameState));
+        game.player2Socket.emit('game.scores.view-state', GameService.send.forPlayer.scoresViewState('player:2', game.gameState));
+    }, 200);
+}
+
 const newPlayerInQueue = (socket) => {
 
     queue.push(socket);
@@ -79,6 +86,11 @@ const createGame = (player1Socket, player2Socket) => {
 
     // Lancement de l'horloge
     const gameInterval = setInterval(() => {
+        if(game.gameState.winnerPlayer !== null) {
+            clearInterval(gameInterval);
+            return endGameWithWinner(game);
+        }
+
         game.gameState.timer--;
 
         // Réinitialisation du timer car fin de tour
@@ -135,7 +147,9 @@ const rollDicesInGame = (socketId) => {
     // Dernier tour, on bloque tout
     if (game.gameState.deck.rollsCounter >= game.gameState.deck.rollsMaximum) {
         GameService.dices.lockEveryDice(game.gameState.deck.dices);
-        game.gameState.timer = 5;
+        if(combinations.length === 0) {
+            game.gameState.timer = 5;
+        }
     }
 
     updateClientsViewDecks(game);
@@ -173,8 +187,23 @@ const selectGridInGame = (socketId, data) => {
     game.gameState.grid = GameService.grid.resetcanBeCheckedCells(game.gameState.grid);
     game.gameState.grid = GameService.grid.selectCell(data.cellId, data.rowIndex, data.cellIndex, game.gameState.currentTurn, game.gameState.grid);
 
-    // TODO: Ici calculer le score
-    // TODO: Puis check si la partie s'arrête (lines / diagolales / no-more-gametokens)
+    game.gameState = GameService.gameTokens.updateGameTokensAfterUsedOne(game.gameState);
+
+    const {player1Score, player2Score, endGamePlayerKey} = GameService.score.checkAndUpdateScore(game.gameState.grid);
+
+    const playerHasUsedAllTheirTokens = GameService.gameTokens.playerHasUsedAllTheirTokens(game.gameState);
+
+    game.gameState.player1Score = player1Score;
+    game.gameState.player2Score = player2Score;
+
+    if(playerHasUsedAllTheirTokens) {
+        game.gameState.winnerPlayer = playerHasUsedAllTheirTokens;
+        return;
+    }
+    if(endGamePlayerKey) {
+        game.gameState.winnerPlayer = endGamePlayerKey;
+        return;
+    }
 
     // Sinon on finit le tour
     game.gameState.currentTurn = game.gameState.currentTurn === 'player:1' ? 'player:2' : 'player:1';
@@ -191,7 +220,13 @@ const selectGridInGame = (socketId, data) => {
     // et on remet à jour la vue
     updateClientsViewGrid(game);
     updateClientsViewDecks(game);
+    updateClientsViewScores(game);
     updateClientsViewChoices(game);
+}
+
+const endGameWithWinner = (game) => {
+    game.player1Socket.emit('game.end', GameService.send.forPlayer.gameEndState('player:1', game.gameState));
+    game.player2Socket.emit('game.end', GameService.send.forPlayer.gameEndState('player:2', game.gameState));
 }
 
 // ---------------------------------------

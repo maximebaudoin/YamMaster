@@ -1,8 +1,16 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet, Platform, UIManager, LayoutAnimation } from "react-native";
 import { SocketContext } from "../../../contexts/socket.context";
 import Dice from "./dice.component";
 import Roll from "./roll.component";
+import { Transition } from 'react-native-reanimated';
+
+if (
+    Platform.OS === 'android' &&
+    UIManager.setLayoutAnimationEnabledExperimental
+) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 const PlayerDeck = () => {
     const socket = useContext(SocketContext);
@@ -12,6 +20,13 @@ const PlayerDeck = () => {
     const [rollsCounter, setRollsCounter] = useState(0);
     const [rollsMaximum, setRollsMaximum] = useState(3);
 
+    const layoutAnimConfig = {
+        duration: 150,
+        update: {
+            type: LayoutAnimation.Types.easeInEaseOut,
+        }
+    };
+
     useEffect(() => {
         socket.on("game.deck.view-state", (data) => {
             setDisplayPlayerDeck(data['displayPlayerDeck']);
@@ -19,7 +34,7 @@ const PlayerDeck = () => {
                 setDisplayRollButton(data['displayRollButton']);
                 setRollsCounter(data['rollsCounter']);
                 setRollsMaximum(data['rollsMaximum']);
-                setDices(data['dices']);
+                setDices(data['dices'].sort((a, b) => a.locked ? -1 : 1));
             }
         });
     }, []);
@@ -29,6 +44,7 @@ const PlayerDeck = () => {
         if (newDices[index].value !== '' && displayRollButton) {
             socket.emit("game.dices.lock", newDices[index].id);
         }
+        LayoutAnimation.configureNext(layoutAnimConfig);
     };
 
     const rollDices = () => {
@@ -55,7 +71,7 @@ const PlayerDeck = () => {
 
                     )}
 
-                    <View style={styles.diceContainer}>
+                    <View style={styles.diceContainer} layout={Transition}>
                         {dices.map((diceData, index) => (
                             <Dice
                                 key={diceData.id}
