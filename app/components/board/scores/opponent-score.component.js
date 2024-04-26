@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { SocketContext } from "../../../contexts/socket.context";
 
 const OpponentScore = () => {
@@ -13,21 +13,19 @@ const OpponentScore = () => {
     }, []);
 
     return (
-        <View style={styles.opponentScoreContainer}>
-            <Text style={styles.paragraph}>Score: {opponentScore}</Text>
-        </View>
+        <Text style={styles.paragraph}>{opponentScore}</Text>
     );
 };
 
 export default OpponentScore;
 
 const styles = StyleSheet.create({
-    opponentScoreContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
     paragraph: {
-        color: 'white'
+        color: 'white',
+        fontSize: 35,
+        fontWeight: "700",
+        textShadowColor: 'rgba(255, 255, 255, 0.5)',
+        textShadowOffset: { width: 0, height: 0 },
+        textShadowRadius: 3
     }
 });

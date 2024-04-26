@@ -1,5 +1,5 @@
 const TURN_DURATION = 40;
-const TOTAL_TOKENS_PER_PLAYER = 3;
+const TOTAL_TOKENS_PER_PLAYER = 12;
 
 const GRID_INIT = [
     [
@@ -75,6 +75,8 @@ const ALL_COMBINATIONS = [
 ];
 
 const GAME_INIT = {
+    idGame: null,
+    isVsBotGame: false,
     gameState: {
         currentTurn: 'player:1',
         timer: null,
@@ -112,7 +114,6 @@ const GameService = {
     },
     send: {
         forPlayer: {
-            // Return conditionnaly gameState custom objet for player views
             viewGameState: (playerKey, game) => {
                 return {
                     inQueue: false,
@@ -121,10 +122,10 @@ const GameService = {
                     idPlayer:
                         (playerKey === 'player:1')
                             ? game.player1Socket.id
-                            : game.player2Socket.id,
+                            : game.isVsBotGame ? 'bot' : game.player2Socket.id,
                     idOpponent:
                         (playerKey === 'player:1')
-                            ? game.player2Socket.id
+                            ? game.isVsBotGame ? 'bot' : game.player2Socket.id
                             : game.player1Socket.id
                 };
             },
@@ -459,7 +460,7 @@ const GameService = {
         },
         findGameIndexBySocketId: (games, socketId) => {
             for (let i = 0; i < games.length; i++) {
-                if (games[i].player1Socket.id === socketId || games[i].player2Socket.id === socketId) {
+                if (games[i].player1Socket.id === socketId || (!games[i].isVsBotGame && games[i].player2Socket.id === socketId)) {
                     return i; // Retourne l'index du jeu si le socket est trouvé
                 }
             }

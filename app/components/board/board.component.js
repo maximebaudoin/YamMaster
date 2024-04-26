@@ -1,52 +1,40 @@
 import React from "react";
 import { View, Text, StyleSheet } from 'react-native';
 import PlayerTimer from "./timers/player-timer.component";
-import OpponentTimer from "./timers/opponent-timer.component";
 import OpponentDeck from "./decks/opponent-deck.component";
 import PlayerDeck from "./decks/player-deck.component";
 import Choices from "./choices/choices.component";
 import Grid from "./grid/grid.component";
-import OpponentScore from "./scores/opponent-score.component";
 import PlayerScore from "./scores/player-score.component";
-
-const OpponentInfos = () => {
-    return (
-        <View style={styles.opponentInfosContainer}>
-            <Text style={styles.paragraph}>Opponent infos</Text>
-        </View>
-    );
-};
-
-const PlayerInfos = () => {
-    return (
-        <View style={styles.playerInfosContainer}>
-            <Text style={styles.paragraph}>Player Infos</Text>
-        </View>
-    );
-};
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Scores from "./scores/scores.component";
 
 const Board = ({ gameViewState }) => {
     return (
         <View style={styles.container}>
-            <View style={[styles.row, { height: '5%' }]}>
-                <OpponentInfos />
-                <View style={styles.opponentTimerScoreContainer}>
-                    <OpponentTimer />
-                    <OpponentScore />
-                </View>
-            </View>
-            <View style={[styles.row, { height: '25%' }]}>
+            <SafeAreaView
+                edges={['top']}
+                style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#CE331F',
+                    paddingBottom: 15,
+                }}
+            >
+                <Scores />
+            </SafeAreaView>
+            <View style={[styles.row, { flex: 1 }]}>
                 <OpponentDeck />
             </View>
-            <View style={[styles.row, { height: '40%' }]}>
+            <View style={[styles.row, { flex: 1 }]}>
                 <Grid />
                 <Choices />
             </View>
-            <View style={[styles.row, { height: '25%' }]}>
+            <View style={[styles.row, { flex: 1 }]}>
                 <PlayerDeck />
             </View>
-            <View style={[styles.row, { height: '5%' }]}>
-                <PlayerInfos />
+            <View style={[styles.row, { flex: 1 }]}>
                 <View style={styles.playerTimerScoreContainer}>
                     <PlayerTimer />
                     <PlayerScore />
@@ -61,7 +49,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: 'stretch',
         width: '100%',
         height: '100%',
     },

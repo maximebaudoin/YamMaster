@@ -45,7 +45,7 @@ export default function Roll({ handlePress }) {
                 />
                 <Animated.View style={[styles.inner, inner]}>
                     <LinearGradient
-                        colors={['rgb(255,128,0)', 'rgb(255,150,0)']}
+                        colors={['#CE331F', '#CE331F']}
                         style={{
                             flex: 1,
                             borderRadius: 99,
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     shadow: {
-        backgroundColor: '#ff990050',
+        backgroundColor: '#CE331F50',
         width: 140 - 16,
         height: 80 - 16,
         borderRadius: 99,
