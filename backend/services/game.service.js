@@ -1,4 +1,4 @@
-const TURN_DURATION = 40;
+const TURN_DURATION = 5;
 const TOTAL_TOKENS_PER_PLAYER = 12;
 
 const GRID_INIT = [
@@ -169,6 +169,12 @@ const GameService = {
                 } : {
                     playerScore: gameState.player2Score,
                     opponentScore: gameState.player1Score
+                };
+            },
+            infosViewState: (playerKey, gameState) => {
+                return {
+                    playerIsCurrentTurn: gameState.currentTurn === playerKey,
+                    opponentIsCurrentTurn: gameState.currentTurn !== playerKey,
                 };
             },
             viewQueueState: () => {

@@ -1,16 +1,33 @@
 import { Image, StyleSheet, Text, View } from "react-native";
-import PlayerScore from "./player-score.component";
-import OpponentScore from "./opponent-score.component";
+import Score from "./score.component";
 import { LinearGradient } from "expo-linear-gradient";
+import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
+import { useEffect } from "react";
 
-const Scores = () => {
+const Scores = ({ playerIsCurrentTurn, opponentIsCurrentTurn, playerScore, opponentScore }) => {
+    const playerAvatarBorderWidth = useSharedValue(1);
+    const playerAvatarLeft = useSharedValue(-21);
+    const opponentAvatarBorderWidth = useSharedValue(1);
+    const opponentAvatarRight = useSharedValue(-21);
+
+    useEffect(() => {
+        playerAvatarBorderWidth.value = withTiming(playerIsCurrentTurn ? 4 : 1);
+        playerAvatarLeft.value = withTiming(playerIsCurrentTurn ? -24 : -21);
+        opponentAvatarBorderWidth.value = withTiming(opponentIsCurrentTurn ? 4 : 1);
+        opponentAvatarRight.value = withTiming(opponentIsCurrentTurn ? -24 : -21);
+    }, [playerIsCurrentTurn, opponentIsCurrentTurn]);
+
     return (
         <View style={styles.container}>
-            <View
+            {/* Player Avatar */}
+            <Animated.View
                 style={{
                     position: 'absolute',
-                    left: -20,
-                    zIndex: 99
+                    left: playerAvatarLeft,
+                    zIndex: 99,
+                    borderRadius: 99,
+                    borderWidth: playerAvatarBorderWidth,
+                    borderColor: 'rgba(0,0,0,0.3)',
                 }}
             >
                 <Image
@@ -19,36 +36,52 @@ const Scores = () => {
                         width: 40,
                         height: 40,
                         borderRadius: 99,
-                        objectFit: 'cover'
+                        objectFit: 'cover',
                     }}
                 />
-            </View>
-            <LinearGradient
-                style={{
-                    borderRadius: 3,
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}
-                colors={['#F67265', '#F75B4E']}
-            >
-                <PlayerScore />
-            </LinearGradient>
+            </Animated.View>
+            {/* END Player Avatar */}
+            {/* Player Score */}
             <View
                 style={{
-                    borderRadius: 3,
                     flex: 1,
                     justifyContent: 'center',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    zIndex: 51
                 }}
             >
-                <OpponentScore />
+                <Score score={playerScore} />
+                <Text style={{
+                    color: '#fff',
+                    fontWeight: "700"
+                }}>Vous</Text>
             </View>
+            {/* END Player Score */}
+            {/* Opponent Score */}
             <View
+                style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 51
+                }}
+            >
+                <Score score={opponentScore} />
+                <Text style={{
+                    color: '#fff',
+                    fontWeight: "800"
+                }}>Bot</Text>
+            </View>
+            {/* END Opponent Score */}
+            {/* Opponent Avatar */}
+            <Animated.View
                 style={{
                     position: 'absolute',
-                    right: -20,
-                    zIndex: 99
+                    right: opponentAvatarRight,
+                    zIndex: 99,
+                    borderRadius: 99,
+                    borderWidth: opponentAvatarBorderWidth,
+                    borderColor: 'rgba(0,0,0,0.3)',
                 }}
             >
                 <Image
@@ -56,11 +89,27 @@ const Scores = () => {
                     style={{
                         width: 40,
                         height: 40,
+                        objectFit: 'cover',
                         borderRadius: 99,
-                        objectFit: 'cover'
                     }}
                 />
-            </View>
+            </Animated.View>
+            {/* END Opponent Avatar */}
+
+            <LinearGradient
+                style={{
+                    position: 'absolute',
+                    top: 2,
+                    left: 2,
+                    height: '100%',
+                    width: '50%',
+                    borderRadius: 3,
+                    zIndex: 50
+                }}
+                colors={['#F67265', '#F75B4E']}
+            >
+
+            </LinearGradient>
         </View>
     );
 };
@@ -75,7 +124,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0,0,0,0.7)',
         padding: 2,
-        borderRadius: 4,
+        borderRadius: 5,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -84,6 +133,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
+        marginHorizontal: 20
     },
     paragraph: {
         color: 'white'

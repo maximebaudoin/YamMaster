@@ -28,6 +28,13 @@ const updateClientsViewDecks = (game) => {
     }, 200);
 }
 
+const updateClientViewInfos = (game) => {
+    setTimeout(() => {
+        game.player1Socket.emit('game.infos.view-state', GameService.send.forPlayer.infosViewState('player:1', game.gameState));
+        !game.isVsBotGame && game.player2Socket.emit('game.infos.view-state', GameService.send.forPlayer.infosViewState('player:2', game.gameState));
+    }, 200);
+}
+
 const updateClientsViewChoices = (game) => {
     setTimeout(() => {
         game.player1Socket.emit('game.choices.view-state', GameService.send.forPlayer.choicesViewState('player:1', game.gameState));
@@ -117,6 +124,7 @@ const createGame = (newGame) => {
     game.player1Socket.emit('game.start', GameService.send.forPlayer.viewGameState('player:1', game));
     !game.isVsBotGame && game.player2Socket.emit('game.start', GameService.send.forPlayer.viewGameState('player:1', game));
 
+    updateClientViewInfos(game);
     updateClientsViewGrid(game);
     updateClientsViewDecks(game);
 
@@ -131,8 +139,6 @@ const createGame = (newGame) => {
 }
 
 const vsBotTurn = (game) => {
-    console.log('vs bot turn', game.idGame);
-
     setTimeout(() => {
         rollDices(game);
 
@@ -176,6 +182,7 @@ const resetTurn = (game) => {
     game.gameState.choices = GameService.init.choices();
     game.gameState.grid = GameService.grid.resetcanBeCheckedCells(game.gameState.grid);
 
+    updateClientViewInfos(game);
     updateClientsViewGrid(game);
     updateClientsViewDecks(game);
     updateClientsViewChoices(game);

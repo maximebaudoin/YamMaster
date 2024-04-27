@@ -38,7 +38,7 @@ const Grid = () => {
                         {row.map((cell, cellIndex) => (
                             <>
                                 <TouchableOpacity
-                                    key={cell.id}
+                                    key={rowIndex+cellIndex+cell.id}
                                     style={[
                                         styles.cell,
                                         cell.owner === "player:1" && styles.playerOwnedCell,

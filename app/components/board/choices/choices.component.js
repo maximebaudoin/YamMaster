@@ -18,7 +18,6 @@ const Choices = () => {
             setCanMakeChoice(data['canMakeChoice']);
             setIdSelectedChoice(data['idSelectedChoice']);
             setAvailableChoices(data['availableChoices']);
-            console.log(data);
         });
 
     }, []);

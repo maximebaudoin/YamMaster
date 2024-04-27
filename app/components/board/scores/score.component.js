@@ -2,27 +2,20 @@ import { useContext, useEffect, useState } from "react";
 import { StyleSheet, Text } from "react-native";
 import { SocketContext } from "../../../contexts/socket.context";
 
-const PlayerScore = () => {
-    const socket = useContext(SocketContext);
-    const [playerScore, setPlayerScore] = useState(0);
-
-    useEffect(() => {
-        socket.on("game.scores.view-state", (data) => {
-            setPlayerScore(data['playerScore'])
-        });
-    }, []);
-
+const Score = ({ score }) => {
     return (
-        <Text style={styles.paragraph}>{playerScore}</Text>
+        <Text style={styles.paragraph}>{score}</Text>
     );
 };
 
-export default PlayerScore;
+export default Score;
 
 const styles = StyleSheet.create({
     paragraph: {
         color: 'white',
         fontSize: 35,
+        marginTop: -3,
+        marginBottom: -5,
         fontWeight: "700",
         textShadowColor: 'rgba(255, 255, 255, 0.5)',
         textShadowOffset: { width: 0, height: 0 },
