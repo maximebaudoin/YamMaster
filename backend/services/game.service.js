@@ -1,4 +1,4 @@
-const TURN_DURATION = 5;
+const TURN_DURATION = 60;
 const TOTAL_TOKENS_PER_PLAYER = 12;
 
 const GRID_INIT = [

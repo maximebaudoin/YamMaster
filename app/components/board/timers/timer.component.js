@@ -1,17 +1,31 @@
 import { useEffect } from "react";
 import { StyleSheet, Text } from "react-native";
-import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 
 const Timer = ({ hide, timer }) => {
     const translateY = useSharedValue(-40);
+    const scale = useSharedValue(1);
+
+    const animatedTextStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }]
+    }));
 
     useEffect(() => {
         translateY.value = withTiming(hide ? -40 : 0);
     }, [hide]);
 
+    useEffect(() => {
+        if (timer <= 5) {
+            scale.value = withSequence(
+                withTiming(1.4, { duration: 200 }),
+                withTiming(1, { duration: 200 }),
+            );
+        }
+    }, [timer]);
+
     return (
         <Animated.View style={[styles.container, { transform: [{ translateY: translateY }] }]}>
-            <Text style={styles.paragraph}>{timer}</Text>
+            <Animated.Text style={[styles.paragraph, animatedTextStyle, timer <= 5 && { color: '#f00', fontWeight: "800" }]}>{timer}</Animated.Text>
         </Animated.View>
     );
 };
@@ -40,8 +54,5 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 20,
         fontWeight: "600",
-        textShadowColor: 'rgba(255, 255, 255, 0.5)',
-        textShadowOffset: { width: 0, height: 0 },
-        textShadowRadius: 3
     }
 });

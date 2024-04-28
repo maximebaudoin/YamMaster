@@ -3,7 +3,7 @@ import { View, TouchableOpacity, Text, StyleSheet, Platform, UIManager, LayoutAn
 import { SocketContext } from "../../../contexts/socket.context";
 import Dice from "./dice.component";
 import Roll from "./roll.component";
-import { Transition } from 'react-native-reanimated';
+import Animated, { CurvedTransition, LinearTransition, SequencedTransition, Transition } from 'react-native-reanimated';
 
 if (
     Platform.OS === 'android' &&
@@ -20,13 +20,6 @@ const PlayerDeck = () => {
     const [rollsCounter, setRollsCounter] = useState(0);
     const [rollsMaximum, setRollsMaximum] = useState(3);
 
-    const layoutAnimConfig = {
-        duration: 150,
-        update: {
-            type: LayoutAnimation.Types.easeInEaseOut,
-        }
-    };
-
     useEffect(() => {
         socket.on("game.deck.view-state", (data) => {
             setDisplayPlayerDeck(data['displayPlayerDeck']);
@@ -34,7 +27,7 @@ const PlayerDeck = () => {
                 setDisplayRollButton(data['displayRollButton']);
                 setRollsCounter(data['rollsCounter']);
                 setRollsMaximum(data['rollsMaximum']);
-                setDices(data['dices'].sort((a, b) => a.locked ? -1 : 1));
+                setDices(data['dices']);
             }
         });
     }, []);
@@ -44,7 +37,6 @@ const PlayerDeck = () => {
         if (newDices[index].value !== '' && displayRollButton) {
             socket.emit("game.dices.lock", newDices[index].id);
         }
-        LayoutAnimation.configureNext(layoutAnimConfig);
     };
 
     const rollDices = () => {
@@ -71,7 +63,7 @@ const PlayerDeck = () => {
 
                     )}
 
-                    <View style={styles.diceContainer} layout={Transition}>
+                    <View style={styles.diceContainer}>
                         {dices.map((diceData, index) => (
                             <Dice
                                 key={diceData.id}
@@ -79,6 +71,7 @@ const PlayerDeck = () => {
                                 locked={diceData.locked}
                                 value={diceData.value}
                                 onPress={toggleDiceLock}
+                                canPress={true}
                             />
                         ))}
                     </View>
@@ -112,8 +105,11 @@ const styles = StyleSheet.create({
     },
     diceContainer: {
         flexDirection: "row",
+        flexWrap: 'wrap',
         width: "70%",
-        justifyContent: "space-between",
+        justifyContent: "center",
+        columnGap: 15,
+        rowGap: 5,
         marginBottom: 10,
     }
 });
