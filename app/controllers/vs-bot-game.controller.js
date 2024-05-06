@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SocketContext } from '../contexts/socket.context';
 import { useNavigation } from "@react-navigation/native";
 import Board from "../components/board/board.component";
 import ConfettiCannon from 'react-native-confetti-cannon';
+import { FlagCheckered } from "../components/icons/flag-checkered.component";
 
 export default function VsBotGameController() {
 
@@ -18,11 +19,15 @@ export default function VsBotGameController() {
     const [loose, setLoose] = useState(null);
     const [endScore, setEndScore] = useState(null);
 
-    useEffect(() => {
+    const startNewGame = () => {
         socket.emit("game.vsbot.start");
         setInLoadingGame(true);
         setInGame(false);
         setInEndGame(false);
+    }
+
+    useEffect(() => {
+        startNewGame();
 
         socket.on('game.start', (data) => {
             setInLoadingGame(data['inLoadingGame']);
@@ -65,11 +70,22 @@ export default function VsBotGameController() {
 
             {inGame && inEndGame && (
                 <>
-                    <Text>Fin de partie!</Text>
-                    {win && (
+                    <FlagCheckered width={120} height={120} fill="#fff" style={styles.endGameFlag} />
+                    <Text style={styles.endGameTitle}>Partie terminée</Text>
+                    {win ? (
                         <>
                             <Text>Bravo !</Text>
                             <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />
+                        </>
+                    ) : (
+                        <>
+                            <Text>Le joueur adverse a gagné...</Text>
+                            <TouchableOpacity
+                                onPress={startNewGame}
+                                style={styles.endGameRestart}
+                            >
+                                <Text>Rejouer</Text>
+                            </TouchableOpacity>
                         </>
                     )}
                 </>
@@ -89,5 +105,15 @@ const styles = StyleSheet.create({
     paragraph: {
         fontSize: 16,
         color: '#fff'
+    },
+    endGameFlag: {
+        transform: [{
+            rotate: '15deg'
+        }]
+    },
+    endGameTitle: {
+        fontSize: 30,
+        color: '#fff',
+        fontWeight: '700'
     }
 });

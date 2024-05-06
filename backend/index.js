@@ -56,6 +56,11 @@ const updateClientsViewScores = (game) => {
     }, 200);
 }
 
+const updateClientsViewEndGame = (game) => {
+    game.player1Socket.emit('game.end', GameService.send.forPlayer.gameEndState('player:1', game.gameState));
+    !game.isVsBotGame && game.player2Socket.emit('game.end', GameService.send.forPlayer.gameEndState('player:2', game.gameState));
+}
+
 const newPlayerInQueue = (socket) => {
     queue.push(socket);
 
@@ -103,10 +108,11 @@ const createGame = (newGame) => {
     const game = games[gameIndex];
 
     // Lancement de l'horloge
-    const gameInterval = setInterval(() => {
+    game.gameInterval = setInterval(() => {
+        console.log(uniqid());
         if (game.gameState.winnerPlayer !== null) {
-            clearInterval(gameInterval);
-            return endGameWithWinner(game);
+            clearInterval(game.gameInterval);
+            return updateClientsViewEndGame(game);
         }
 
         game.gameState.timer--;
@@ -136,6 +142,14 @@ const createGame = (newGame) => {
     !game.isVsBotGame && game.player2Socket.on('disconnect', () => {
         clearInterval(gameInterval);
     });
+}
+
+const endGame = (game, winnerPlayerKey) => {
+    game.gameState.winnerPlayer = winnerPlayerKey;
+    updateClientsViewEndGame(game);
+    
+    const gameIndex = GameService.utils.findGameIndexById(games, game.idGame);
+    games.splice(gameIndex, 1);
 }
 
 const vsBotTurn = (game) => {
@@ -239,7 +253,6 @@ const selectGrid = (game, data) => {
     game.gameState = GameService.gameTokens.updateGameTokensAfterUsedOne(game.gameState);
 
     const { player1Score, player2Score, endGamePlayerKey } = GameService.score.checkAndUpdateScore(game.gameState.grid);
-
     const playerHasUsedAllTheirTokens = GameService.gameTokens.playerHasUsedAllTheirTokens(game.gameState);
 
     game.gameState.player1Score = player1Score;
@@ -261,11 +274,6 @@ const selectGrid = (game, data) => {
     updateClientsViewScores(game);
 }
 
-const endGameWithWinner = (game) => {
-    game.player1Socket.emit('game.end', GameService.send.forPlayer.gameEndState('player:1', game.gameState));
-    !game.isVsBotGame && game.player2Socket.emit('game.end', GameService.send.forPlayer.gameEndState('player:2', game.gameState));
-}
-
 // ---------------------------------------
 // -------- SOCKETS MANAGEMENT -----------
 // ---------------------------------------
@@ -279,6 +287,12 @@ io.on('connection', socket => {
     socket.on('queue.leave', () => {
         playerLeaveQueue(socket);
     });
+
+    socket.on('game.end', () => {
+        const gameIndex = GameService.utils.findGameIndexBySocketId(games, socket.id);
+        const winnerPlayerKey = GameService.utils.findGamePlayerKeyBySocketId(games[gameIndex], socket.id);
+        endGame(games[gameIndex], winnerPlayerKey === 'player:1' ? 'player:2' : 'player:1');
+    })
 
     socket.on('game.vsbot.start', () => {
         createVsBotGame(socket);

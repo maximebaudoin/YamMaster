@@ -472,6 +472,14 @@ const GameService = {
             }
             return -1;
         },
+        findGamePlayerKeyBySocketId: (game, socketId) => {
+            if (game.player1Socket.id === socketId) {
+                return 'player:1';
+            } else if (game.player2Socket.id === socketId) {
+                return 'player:2';
+            }
+            return false;
+        },
         findDiceIndexByDiceId: (dices, idDice) => {
             for (let i = 0; i < dices.length; i++) {
                 if (dices[i].id === idDice) {
