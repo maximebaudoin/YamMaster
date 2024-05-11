@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SocketContext } from '../contexts/socket.context';
 import { useNavigation } from "@react-navigation/native";
 import Board from "../components/board/board.component";
 import ConfettiCannon from 'react-native-confetti-cannon';
-import { FlagCheckered } from "../components/icons/flag-checkered.component";
+import Button from "../components/button.component";
+import { RotateRight } from "../components/icons/rotate-right.component";
+import LottieView from 'lottie-react-native';
 
 export default function VsBotGameController() {
 
@@ -56,9 +58,14 @@ export default function VsBotGameController() {
 
             {inLoadingGame && (
                 <>
-                    <Text style={styles.paragraph}>
-                        Lancement de la partie...
-                    </Text>
+                    <LottieView
+                        autoPlay
+                        style={{
+                            width: 200,
+                            height: 200,
+                        }}
+                        source={require('../../assets/lottie/dice.json')}
+                    />
                 </>
             )}
 
@@ -70,24 +77,38 @@ export default function VsBotGameController() {
 
             {inGame && inEndGame && (
                 <>
-                    <FlagCheckered width={120} height={120} fill="#fff" style={styles.endGameFlag} />
+                    {/* <FlagCheckered width={120} height={120} fill="#fff" style={styles.endGameFlag} /> */}
+                    <LottieView
+                        autoPlay
+                        // ref={animation}
+                        style={{
+                            width: 300,
+                            height: 300,
+                            // backgroundColor: '#eee',
+                        }}
+                        source={require('../../assets/lottie/flag.json')}
+                    />
                     <Text style={styles.endGameTitle}>Partie terminée</Text>
                     {win ? (
                         <>
-                            <Text>Bravo !</Text>
+                            <Text style={styles.endGameSubTitle}>Vous avez gagné !</Text>
                             <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />
                         </>
                     ) : (
                         <>
-                            <Text>Le joueur adverse a gagné...</Text>
-                            <TouchableOpacity
-                                onPress={startNewGame}
-                                style={styles.endGameRestart}
-                            >
-                                <Text>Rejouer</Text>
-                            </TouchableOpacity>
+                            <Text style={styles.endGameSubTitle}>Le bot a gagné</Text>
                         </>
                     )}
+                    <View style={styles.endGameBtnContainer}>
+                        <Button
+                            handlePress={startNewGame}
+                            leftIcon={RotateRight}
+                            theme="primary"
+                        >Rejouer</Button>
+                        <Button
+                            handlePress={() => navigation.navigate('HomeScreen')}
+                        >Quitter</Button>
+                    </View>
                 </>
             )}
         </View>
@@ -106,14 +127,18 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#fff'
     },
-    endGameFlag: {
-        transform: [{
-            rotate: '15deg'
-        }]
-    },
     endGameTitle: {
         fontSize: 30,
         color: '#fff',
         fontWeight: '700'
+    },
+    endGameSubTitle: {
+        fontSize: 18,
+        color: '#fff',
+        fontWeight: '500',
+        marginBottom: 20
+    },
+    endGameBtnContainer: {
+        gap: 10
     }
 });

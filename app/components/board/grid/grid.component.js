@@ -17,9 +17,9 @@ const Grid = () => {
     );
 
     const handleSelectCell = (cellId, rowIndex, cellIndex) => {
-        // if (canSelectCells) {
+        if (canSelectCells) {
             socket.emit("game.grid.selected", { cellId, rowIndex, cellIndex });
-        // }
+        }
     };
 
     useEffect(() => {
@@ -48,7 +48,7 @@ const Grid = () => {
                                         cellIndex !== 0 && styles.leftBorder,
                                     ]}
                                     onPress={() => handleSelectCell(cell.id, rowIndex, cellIndex)}
-                                    // disabled={!cell.canBeChecked}
+                                    disabled={!cell.canBeChecked}
                                 >
                                     <Text style={styles.cellText}>{cell.viewContent}</Text>
                                 </TouchableOpacity>

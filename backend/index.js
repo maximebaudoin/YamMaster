@@ -136,16 +136,16 @@ const createGame = (newGame) => {
 
     // Arrêt de l'horloge si un des joueurs quitte la partie
     game.player1Socket.on('disconnect', () => {
-        clearInterval(gameInterval);
+        clearInterval(game.gameInterval);
     });
 
     !game.isVsBotGame && game.player2Socket.on('disconnect', () => {
-        clearInterval(gameInterval);
+        clearInterval(game.gameInterval);
     });
 }
 
 const endGame = (game, winnerPlayerKey) => {
-    game.gameState.winnerPlayer = winnerPlayerKey;
+    game.gameState.winnerPlayer = 'player:1';
     updateClientsViewEndGame(game);
     
     const gameIndex = GameService.utils.findGameIndexById(games, game.idGame);

@@ -1,9 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SocketContext } from '../contexts/socket.context';
 import { useNavigation } from "@react-navigation/native";
 import Board from "../components/board/board.component";
 import ConfettiCannon from 'react-native-confetti-cannon';
+import Button from "../components/button.component";
+import { RotateRight } from "../components/icons/rotate-right.component";
+import LottieView from 'lottie-react-native';
 
 export default function OnlineGameController() {
 
@@ -66,20 +69,23 @@ export default function OnlineGameController() {
             {!inQueue && !inGame && !inEndGame && (
                 <>
                     <Text style={styles.paragraph}>
-                        Waiting for server datas...
+                        Connexion au serveur...
                     </Text>
                 </>
             )}
 
             {inQueue && (
                 <>
-                    <Text style={styles.paragraph}>
-                        Waiting for another player...
-                    </Text>
-                    <Button
-                        title="Quitter la file d'attente"
-                        onPress={leaveQueue}
-                    />
+                    <View style={{
+                        gap: 15
+                    }}>
+                        <Text style={styles.paragraph}>
+                            En attente d'un autre joueur...
+                        </Text>
+                        <Button
+                            handlePress={leaveQueue}
+                        >Quitter la file d'attente</Button>
+                    </View>
                 </>
             )}
 
@@ -91,13 +97,35 @@ export default function OnlineGameController() {
 
             {inGame && inEndGame && (
                 <>
-                    <Text>Fin de partie!</Text>
-                    {win && (
+                    <LottieView
+                        autoPlay
+                        style={{
+                            width: 300,
+                            height: 300,
+                        }}
+                        source={require('../../assets/lottie/flag.json')}
+                    />
+                    <Text style={styles.endGameTitle}>Partie terminée</Text>
+                    {win ? (
                         <>
-                            <Text>Bravo !</Text>
+                            <Text style={styles.endGameSubTitle}>Vous avez gagné !</Text>
                             <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />
                         </>
+                    ) : (
+                        <>
+                            <Text style={styles.endGameSubTitle}>Le bot a gagné</Text>
+                        </>
                     )}
+                    <View style={styles.endGameBtnContainer}>
+                        <Button
+                            handlePress={startNewGame}
+                            leftIcon={RotateRight}
+                            theme="primary"
+                        >Rejouer</Button>
+                        <Button
+                            handlePress={() => navigation.navigate('HomeScreen')}
+                        >Quitter</Button>
+                    </View>
                 </>
             )}
         </View>
@@ -113,7 +141,22 @@ const styles = StyleSheet.create({
         height: '100%'
     },
     paragraph: {
-        fontSize: 16,
+        fontSize: 20,
+        fontWeight: '600',
         color: '#fff'
+    },
+    endGameTitle: {
+        fontSize: 30,
+        color: '#fff',
+        fontWeight: '700'
+    },
+    endGameSubTitle: {
+        fontSize: 18,
+        color: '#fff',
+        fontWeight: '500',
+        marginBottom: 20
+    },
+    endGameBtnContainer: {
+        gap: 10
     }
 });

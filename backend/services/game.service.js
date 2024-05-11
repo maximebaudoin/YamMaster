@@ -3,39 +3,39 @@ const TOTAL_TOKENS_PER_PLAYER = 12;
 
 const GRID_INIT = [
     [
-        { viewContent: '1', id: 'brelan1', owner: null, canBeChecked: true },
-        { viewContent: '3', id: 'brelan3', owner: null, canBeChecked: true },
-        { viewContent: 'Défi', id: 'defi', owner: null, canBeChecked: true },
-        { viewContent: '4', id: 'brelan4', owner: null, canBeChecked: true },
-        { viewContent: '6', id: 'brelan6', owner: null, canBeChecked: true },
+        { viewContent: '1', id: 'brelan1', owner: null, canBeChecked: false },
+        { viewContent: '3', id: 'brelan3', owner: null, canBeChecked: false },
+        { viewContent: 'Défi', id: 'defi', owner: null, canBeChecked: false },
+        { viewContent: '4', id: 'brelan4', owner: null, canBeChecked: false },
+        { viewContent: '6', id: 'brelan6', owner: null, canBeChecked: false },
     ],
     [
-        { viewContent: '2', id: 'brelan2', owner: null, canBeChecked: true },
-        { viewContent: 'Carré', id: 'carre', owner: null, canBeChecked: true },
-        { viewContent: 'Sec', id: 'sec', owner: null, canBeChecked: true },
-        { viewContent: 'Full', id: 'full', owner: null, canBeChecked: true },
-        { viewContent: '5', id: 'brelan5', owner: null, canBeChecked: true },
+        { viewContent: '2', id: 'brelan2', owner: null, canBeChecked: false },
+        { viewContent: 'Carré', id: 'carre', owner: null, canBeChecked: false },
+        { viewContent: 'Sec', id: 'sec', owner: null, canBeChecked: false },
+        { viewContent: 'Full', id: 'full', owner: null, canBeChecked: false },
+        { viewContent: '5', id: 'brelan5', owner: null, canBeChecked: false },
     ],
     [
-        { viewContent: '≤8', id: 'moinshuit', owner: null, canBeChecked: true },
-        { viewContent: 'Full', id: 'full', owner: null, canBeChecked: true },
-        { viewContent: 'Yam', id: 'yam', owner: null, canBeChecked: true },
-        { viewContent: 'Défi', id: 'defi', owner: null, canBeChecked: true },
-        { viewContent: 'Suite', id: 'suite', owner: null, canBeChecked: true },
+        { viewContent: '≤8', id: 'moinshuit', owner: null, canBeChecked: false },
+        { viewContent: 'Full', id: 'full', owner: null, canBeChecked: false },
+        { viewContent: 'Yam', id: 'yam', owner: null, canBeChecked: false },
+        { viewContent: 'Défi', id: 'defi', owner: null, canBeChecked: false },
+        { viewContent: 'Suite', id: 'suite', owner: null, canBeChecked: false },
     ],
     [
-        { viewContent: '6', id: 'brelan6', owner: null, canBeChecked: true },
-        { viewContent: 'Sec', id: 'sec', owner: null, canBeChecked: true },
-        { viewContent: 'Suite', id: 'suite', owner: null, canBeChecked: true },
-        { viewContent: '≤8', id: 'moinshuit', owner: null, canBeChecked: true },
-        { viewContent: '1', id: 'brelan1', owner: null, canBeChecked: true },
+        { viewContent: '6', id: 'brelan6', owner: null, canBeChecked: false },
+        { viewContent: 'Sec', id: 'sec', owner: null, canBeChecked: false },
+        { viewContent: 'Suite', id: 'suite', owner: null, canBeChecked: false },
+        { viewContent: '≤8', id: 'moinshuit', owner: null, canBeChecked: false },
+        { viewContent: '1', id: 'brelan1', owner: null, canBeChecked: false },
     ],
     [
-        { viewContent: '3', id: 'brelan3', owner: null, canBeChecked: true },
-        { viewContent: '2', id: 'brelan2', owner: null, canBeChecked: true },
-        { viewContent: 'Carré', id: 'carre', owner: null, canBeChecked: true },
-        { viewContent: '5', id: 'brelan5', owner: null, canBeChecked: true },
-        { viewContent: '4', id: 'brelan4', owner: null, canBeChecked: true },
+        { viewContent: '3', id: 'brelan3', owner: null, canBeChecked: false },
+        { viewContent: '2', id: 'brelan2', owner: null, canBeChecked: false },
+        { viewContent: 'Carré', id: 'carre', owner: null, canBeChecked: false },
+        { viewContent: '5', id: 'brelan5', owner: null, canBeChecked: false },
+        { viewContent: '4', id: 'brelan4', owner: null, canBeChecked: false },
     ]
 ];
 
@@ -76,18 +76,19 @@ const ALL_COMBINATIONS = [
 
 const GAME_INIT = {
     idGame: null,
-    isVsBotGame: false,
-    gameState: {
-        currentTurn: 'player:1',
-        timer: null,
-        player1Score: 0,
-        player2Score: 0,
-        player1UsedTokens: 0,
-        player2UsedTokens: 0,
-        winnerPlayer: null,
-        choices: {},
-        deck: {}
-    }
+    isVsBotGame: false
+};
+
+const GAME_STATE_INIT = {
+    currentTurn: 'player:1',
+    timer: null,
+    player1Score: 0,
+    player2Score: 0,
+    player1UsedTokens: 0,
+    player2UsedTokens: 0,
+    winnerPlayer: null,
+    choices: {},
+    deck: {}
 };
 
 const GameService = {
@@ -96,6 +97,7 @@ const GameService = {
         // Init first level of structure of 'gameState' object
         gameState: () => {
             const game = { ...GAME_INIT };
+            game['gameState'] = { ...GAME_STATE_INIT };
             game['gameState']['timer'] = TURN_DURATION;
             game['gameState']['deck'] = { ...DECK_INIT };
             game['gameState']['choices'] = { ...CHOICES_INIT };
