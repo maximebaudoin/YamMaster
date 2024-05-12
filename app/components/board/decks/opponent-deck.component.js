@@ -51,9 +51,10 @@ const styles = StyleSheet.create({
     },
     diceContainer: {
         flexDirection: "row",
-        width: "70%",
-        justifyContent: "space-between",
-        marginBottom: 10,
+        flexWrap: 'wrap',
+        justifyContent: "center",
+        columnGap: 15,
+        rowGap: 12,
     },
 });
 

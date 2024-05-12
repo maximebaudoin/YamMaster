@@ -12,23 +12,19 @@ const Choices = () => {
     const [availableChoices, setAvailableChoices] = useState([]);
 
     useEffect(() => {
-
         socket.on("game.choices.view-state", (data) => {
             setDisplayChoices(data['displayChoices']);
             setCanMakeChoice(data['canMakeChoice']);
             setIdSelectedChoice(data['idSelectedChoice']);
             setAvailableChoices(data['availableChoices']);
         });
-
     }, []);
 
     const handleSelectChoice = (choiceId) => {
-
         if (canMakeChoice) {
             setIdSelectedChoice(choiceId);
             socket.emit("game.choices.selected", { choiceId });
         }
-
     };
 
     return (
@@ -55,29 +51,34 @@ const Choices = () => {
 const styles = StyleSheet.create({
     choicesContainer: {
         flex: 1,
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-        paddingHorizontal: 10,
-        borderBottomWidth: 1,
-        borderColor: "black",
-        backgroundColor: "lightgrey"
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-end",
+        paddingLeft: 7,
+        paddingVertical: 7,
+        backgroundColor: "rgba(0,0,0,0.3)",
+        borderTopLeftRadius: 5,
+        borderBottomLeftRadius: 5,
+        gap: 5
     },
     choiceButton: {
         backgroundColor: "white",
-        borderRadius: 5,
-        marginVertical: 5,
+        borderTopLeftRadius: 3,
+        borderBottomLeftRadius: 3,
         alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-        height: "10%"
+        justifyContent: "flex-start",
+        padding: 5,
+        paddingLeft: 3,
+        paddingRight: 0,
+        width: "100%"
     },
     selectedChoice: {
-        backgroundColor: "lightgreen",
+        backgroundColor: "rgba(255,100,255,0.8)",
     },
     choiceText: {
         fontSize: 13,
         fontWeight: "bold",
+        textAlign: 'left'
     },
     disabledChoice: {
         opacity: 0.5,

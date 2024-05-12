@@ -8,7 +8,7 @@ export default function Roll({ handlePress }) {
     const animation = useSharedValue(0);
 
     const inner = useAnimatedStyle(() => ({
-        top: interpolate(animation.value, [0, 1], [2, 5], Extrapolation.CLAMP)
+        top: interpolate(animation.value, [0, 1], [0, 5], Extrapolation.CLAMP)
     }));
 
     const handlePressDown = () => {

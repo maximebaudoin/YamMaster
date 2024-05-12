@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import Animated, { Easing, ReduceMotion, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated";
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import Animated, { Easing, ReduceMotion, interpolateColor, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated";
 import { Lock } from "../../icons/lock.component";
+
+const width = Dimensions.get('window').width;
 
 const Dice = ({ index, locked, value, onPress, opponent = false, canPress }) => {
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
@@ -9,6 +11,9 @@ const Dice = ({ index, locked, value, onPress, opponent = false, canPress }) => 
     const rotation = useSharedValue(rotationDefaultValue);
     const borderWidth = useSharedValue(0);
     const scale = useSharedValue(1);
+    const textColor = useSharedValue(0);
+
+    const diceWidth = ((width - 80 - 15 * 4) / 5);
 
     const handlePress = () => {
         if (!opponent) {
@@ -20,10 +25,11 @@ const Dice = ({ index, locked, value, onPress, opponent = false, canPress }) => 
         transform: [{ rotate: `${rotation.value}deg` }],
     }));
     const animatedBodyStyle = useAnimatedStyle(() => ({
-        borderWidth: borderWidth.value
+        borderWidth: 0
     }));
     const animatedTextStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }]
+        transform: [{ scale: scale.value }],
+        color: interpolateColor(textColor.value, [0,1], ['white','black'])
     }));
 
     useEffect(() => {
@@ -33,6 +39,7 @@ const Dice = ({ index, locked, value, onPress, opponent = false, canPress }) => 
         borderWidth.value = withTiming(locked && value !== '' ? 2 : 0, {
             duration: 300,
         });
+        textColor.value = withTiming(locked || value === null ? 0 : 1);
     }, [locked, value]);
 
     useEffect(() => {
@@ -45,7 +52,10 @@ const Dice = ({ index, locked, value, onPress, opponent = false, canPress }) => 
     return (
         <Animated.View style={animatedContainerStyle}>
             <AnimatedTouchableOpacity
-                style={[styles.dice, (locked || value === null) && styles.lockedDice, animatedBodyStyle]}
+                style={[styles.dice, {
+                    width: diceWidth,
+                    height: diceWidth,
+                }, (locked || value === null) && styles.lockedDice, animatedBodyStyle]}
                 onPress={handlePress}
                 disabled={!canPress}
             >
@@ -53,8 +63,8 @@ const Dice = ({ index, locked, value, onPress, opponent = false, canPress }) => 
                 {locked && value !== '' && (
                     <View style={{
                         borderRadius: 99,
-                        width: 18, height: 18,
-                        backgroundColor: '#000',
+                        width: 23, height: 23,
+                        backgroundColor: '#CE331F',
                         position: 'absolute',
                         top: -4, right: -4,
                         alignItems: 'center',
@@ -71,24 +81,18 @@ const Dice = ({ index, locked, value, onPress, opponent = false, canPress }) => 
 
 const styles = StyleSheet.create({
     dice: {
-        width: 40,
-        height: 40,
         backgroundColor: "white",
         borderRadius: 5,
         justifyContent: "center",
         alignItems: "center",
     },
     lockedDice: {
-        backgroundColor: "gray",
+        backgroundColor: "rgba(0,0,0,0.5)",
         borderColor: 'red'
     },
     diceText: {
-        fontSize: 20,
+        fontSize: 28,
         fontWeight: "bold",
-    },
-    opponentText: {
-        fontSize: 12,
-        color: "red",
     },
 });
 

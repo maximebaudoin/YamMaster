@@ -56,7 +56,7 @@ const PlayerDeck = () => {
                         <>
                             <View style={styles.rollInfoContainer}>
                                 <Text style={styles.rollInfoText}>
-                                    Lancer {rollsCounter} / {rollsMaximum}
+                                    Lancé {rollsCounter} / {rollsMaximum}
                                 </Text>
                             </View>
                         </>
@@ -94,23 +94,31 @@ const styles = StyleSheet.create({
     deckPlayerContainer: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        position: "relative",
+        gap: 20
     },
     rollInfoContainer: {
-        marginBottom: 10,
+        alignSelf: "flex-end",
+        backgroundColor: '#CE331F',
+        borderTopLeftRadius: 99,
+        borderBottomLeftRadius: 99,
+        paddingHorizontal: 10,
+        paddingVertical: 7,
+        paddingLeft: 13
     },
     rollInfoText: {
-        fontSize: 14,
+        fontSize: 15,
         fontStyle: "italic",
+        fontWeight: "600",
+        color: "#fff"
     },
     diceContainer: {
         flexDirection: "row",
         flexWrap: 'wrap',
-        width: "70%",
         justifyContent: "center",
         columnGap: 15,
-        rowGap: 5,
-        marginBottom: 10,
+        rowGap: 12,
     }
 });
 

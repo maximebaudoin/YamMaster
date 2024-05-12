@@ -10,7 +10,7 @@ const Board = ({ gameViewState }) => {
     return (
         <View style={styles.container}>
             <GameInfos />
-            <View style={[styles.row, { flex: 1 }]}>
+            <View style={[styles.row, { height: 140 }]}>
                 <OpponentDeck />
             </View>
             <View style={[styles.row, { flex: 1 }]}>
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: 'row',
-        width: '100%'
+        width: '100%',
     },
     opponentInfosContainer: {
         flex: 7,

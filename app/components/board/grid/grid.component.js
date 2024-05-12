@@ -44,8 +44,6 @@ const Grid = () => {
                                         cell.owner === "player:1" && styles.playerOwnedCell,
                                         cell.owner === "player:2" && styles.opponentOwnedCell,
                                         (cell.canBeChecked && !(cell.owner === "player:1") && !(cell.owner === "player:2")) && styles.canBeCheckedCell,
-                                        rowIndex !== 0 && styles.topBorder,
-                                        cellIndex !== 0 && styles.leftBorder,
                                     ]}
                                     onPress={() => handleSelectCell(cell.id, rowIndex, cellIndex)}
                                     disabled={!cell.canBeChecked}
@@ -62,10 +60,12 @@ const Grid = () => {
 
 const styles = StyleSheet.create({
     gridContainer: {
-        flex: 7,
+        flex: 5,
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
+        gap: 4,
+        paddingHorizontal: 5
     },
     row: {
         flexDirection: "row",
@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
+        gap: 4
     },
     cell: {
         flexDirection: "row",
@@ -81,29 +82,23 @@ const styles = StyleSheet.create({
         height: "100%",
         justifyContent: "center",
         alignItems: "center",
-        borderWidth: 1,
-        borderColor: "black",
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        borderRadius: 5
     },
     cellText: {
-        fontSize: 11,
+        fontSize: 17,
+        fontWeight: "600",
+        color: "#fff"
     },
     playerOwnedCell: {
-        backgroundColor: "lightgreen",
-        opacity: 0.9,
+        backgroundColor: "rgba(0,255,0,0.5)",
     },
     opponentOwnedCell: {
-        backgroundColor: "lightcoral",
-        opacity: 0.9,
+        backgroundColor: "rgba(200,0,0,0.7)",
     },
     canBeCheckedCell: {
-        backgroundColor: "lightyellow",
-    },
-    topBorder: {
-        borderTopWidth: 1,
-    },
-    leftBorder: {
-        borderLeftWidth: 1,
-    },
+        backgroundColor: "rgba(255,100,255,0.9)",
+    }
 });
 
 export default Grid;
