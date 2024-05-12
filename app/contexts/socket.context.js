@@ -4,7 +4,7 @@ import io from "socket.io-client";
 
 console.log('Emulation OS Platform: ', Platform.OS);
 
-export const socketEndpoint = Platform.OS === 'web' ? "http://localhost:3000" : "http://192.168.1.144:3000";
+export const socketEndpoint = Platform.OS === 'web' ? "http://localhost:3000" : "http://192.168.68.109:3000";
 
 export const socket = io(socketEndpoint, {
     transports: ["websocket"],

@@ -5,7 +5,22 @@ const Button = ({ leftIcon = null, rightIcon = null, handlePress = () => { }, ch
     const LeftIcon = leftIcon;
     const RightIcon = rightIcon;
 
-    const backgroundColor = theme === "danger" ? "#CE331F" : "#1D74D0";
+    // const backgroundColor = theme === "danger" ? "#CE331F" : "#1D74D0";
+
+    let backgroundColor;
+    switch (theme) {
+        case "primary":
+            backgroundColor = "#1D74D0";
+            break;
+        case "danger":
+            backgroundColor = "#CE331F";
+            break;
+        case "other":
+            backgroundColor = "#206b28";
+            break;
+        default:
+            backgroundColor = "#1D74D0";
+    }
 
     return (
         <TouchableOpacity

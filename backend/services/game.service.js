@@ -191,14 +191,16 @@ const GameService = {
                     inGame: false,
                 };
             },
-            gameEndState: (playerKey, gameState) => {
+            gameEndState: (playerKey, game) => {
                 return {
                     inQueue: false,
                     inGame: true,
                     inEndGame: true,
-                    win: playerKey === gameState.winnerPlayer,
-                    loose: playerKey !== gameState.winnerPlayer,
-                    endScore: GameService.send.forPlayer.scoresViewState(playerKey, gameState)
+                    isBotGame: game.isVsBotGame,
+                    win: playerKey === game.gameState.winnerPlayer,
+                    loose: playerKey !== game.gameState.winnerPlayer,
+                    endScore: GameService.send.forPlayer.scoresViewState(playerKey, game.gameState),
+                    grid: game.gameState.grid
                 }
             }
         }
