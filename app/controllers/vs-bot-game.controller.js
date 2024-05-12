@@ -92,7 +92,7 @@ export default function VsBotGameController() {
                     {win ? (
                         <>
                             <Text style={styles.endGameSubTitle}>Vous avez gagné !</Text>
-                            <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />
+                            <ConfettiCannon count={150} origin={{ x: -10, y: 0 }} fallSpeed={3500} fadeOut={300} />
                         </>
                     ) : (
                         <>

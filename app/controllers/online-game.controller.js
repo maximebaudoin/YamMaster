@@ -36,6 +36,13 @@ export default function OnlineGameController() {
       );
     }
   };
+    
+  const startNewGame = () => {
+    socket.emit("game.vsbot.start");
+    setInLoadingGame(true);
+    setInGame(false);
+    setInEndGame(false);
+  }
 
   const leaveQueue = () => {
     socket.emit("queue.leave");
