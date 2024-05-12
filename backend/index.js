@@ -3,7 +3,6 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 var uniqid = require('uniqid');
 const GameService = require('./services/game.service');
-const { create } = require('domain');
 
 // ---------------------------------------------------
 // -------- CONSTANTS AND GLOBAL VARIABLES -----------
@@ -109,7 +108,6 @@ const createGame = (newGame) => {
 
     // Lancement de l'horloge
     game.gameInterval = setInterval(() => {
-        console.log(uniqid());
         if (game.gameState.winnerPlayer !== null) {
             clearInterval(game.gameInterval);
             return updateClientsViewEndGame(game);
@@ -145,48 +143,119 @@ const createGame = (newGame) => {
 }
 
 const endGame = (game, winnerPlayerKey) => {
-    game.gameState.winnerPlayer = 'player:1';
+    game.gameState.winnerPlayer = winnerPlayerKey;
     updateClientsViewEndGame(game);
-    
+
     const gameIndex = GameService.utils.findGameIndexById(games, game.idGame);
     games.splice(gameIndex, 1);
 }
 
 const vsBotTurn = (game) => {
-    setTimeout(() => {
-        rollDices(game);
+    const start = async () => {
+        while (game.gameState.deck.rollsCounter < 3 && !endOfTurn) {
+            await roll();
+        }
+    }
 
-        setTimeout(() => {
-            lockDice(game, 2);
-
+    const roll = () => {
+        return new Promise((resolve) => {
             setTimeout(() => {
                 rollDices(game);
-
-                setTimeout(() => {
-                    lockDice(game, 1);
-
-                    setTimeout(() => {
-                        rollDices(game);
-
-                        setTimeout(() => {
-                            if(typeof game.gameState.choices.availableChoices[0] !== "undefined") {
-                                selectChoice(game, {
-                                    choiceId: game.gameState.choices.availableChoices[0].id
-                                });
-
-                                // setTimeout(() => {
-                                //     for(let i = 0; i < )
-                                //     selectGrid(game, {
-
-                                //     })
-                                // }, 1000);
-                            }
-                        }, 1000);
-                    }, 1000);
+                setTimeout(async () => {
+                    await choiceAndGrid();
+                    if (game.gameState.deck.rollsCounter < 3) {
+                        await brelanLock();
+                    }
+                    resolve();
                 }, 1000);
             }, 1000);
-        }, 1000);
-    }, 1000);
+        });
+    }
+
+    const brelanLock = () => {
+        let diceValueToLock;
+
+        if (brelanTarget === null) {
+            const dicesCount = Array(6).fill(0);
+            for (let i = 0; i < game.gameState.deck.dices.length; i++) {
+                dicesCount[game.gameState.deck.dices[i].value]++;
+            }
+            brelanTarget = dicesCount.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
+        }
+
+        const dicesToLock = [...game.gameState.deck.dices].filter(dice => dice.value == brelanTarget && !dice.locked);
+
+        for (let i = 0; i < dicesToLock.length; i++) {
+            setTimeout(() => lockDice(game, dicesToLock[i].id), 500 * i);
+        }
+
+        return new Promise(resolve => setTimeout(resolve, dicesToLock.length * 500));
+    }
+
+    const choiceAndGrid = () => {
+        const importantCombinations = ['sec', 'defi', 'full', 'suite'];
+        const availableChoicesSort = [...game.gameState.choices.availableChoices].sort((a, b) => GameService.init.combinations().indexOf(a) - GameService.init.combinations().indexOf(b));
+        let choiceIdToSelect = null;
+
+        if (availableChoicesSort.length === 0) {
+            return Promise.resolve();
+        }
+
+        if(game.gameState.deck.rollsCounter < 3) {
+            for(let i = 0; i < availableChoicesSort.length; i++) {
+                if(importantCombinations.includes(availableChoicesSort[i].id)) {
+                    choiceIdToSelect = availableChoicesSort[i].id;
+                    break;
+                }
+            }
+            if (choiceIdToSelect === null) {
+                return Promise.resolve();
+            }
+        } else {
+            choiceIdToSelect = availableChoicesSort[0].id;
+        }
+
+        return new Promise(resolve => {
+            setTimeout(async () => {
+                selectChoice(game, {
+                    choiceId: choiceIdToSelect
+                });
+                await grid();
+                resolve();
+            }, 600);
+        });
+    }
+
+    const grid = () => {
+        let cellDataToSelect;
+
+        for (let i = 0; i < game.gameState.grid.length; i++) {
+            for (let j = 0; j < game.gameState.grid[i].length; j++) {
+                if (game.gameState.grid[i][j].canBeChecked === true) {
+                    cellDataToSelect = {
+                        cellId: game.gameState.grid[i][j].id,
+                        rowIndex: i,
+                        cellIndex: j
+                    };
+                    break;
+                }
+            }
+            if (cellDataToSelect === null) break;
+        }
+
+        return new Promise(resolve => {
+            setTimeout(() => {
+                selectGrid(game, cellDataToSelect);
+                endOfTurn = true;
+                resolve();
+            }, 600);
+        });
+    }
+
+    let brelanTarget = null;
+    let endOfTurn = false;
+
+    start();
 }
 
 const resetTurn = (game) => {
@@ -213,7 +282,10 @@ const rollDices = (game) => {
 
     const isDefi = false;
     const isSec = game.gameState.deck.rollsCounter === 1;
-    const combinations = GameService.choices.findCombinations(rolledDices, isDefi, isSec);
+
+    const freeCellsCombinations = GameService.utils.getFreeCombinations(game);
+    let combinations = GameService.choices.findCombinations(rolledDices, isDefi, isSec);
+    combinations = combinations.filter(combination => freeCellsCombinations.includes(combination))
 
     // we affect changes to gameState
     game.gameState.choices.availableChoices = combinations;

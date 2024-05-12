@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import Score from "./score.component";
 import { LinearGradient } from "expo-linear-gradient";
-import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useEffect } from "react";
 
 const Scores = ({ playerIsCurrentTurn, opponentIsCurrentTurn, playerScore, opponentScore }) => {
@@ -16,6 +16,12 @@ const Scores = ({ playerIsCurrentTurn, opponentIsCurrentTurn, playerScore, oppon
         opponentAvatarBorderWidth.value = withTiming(opponentIsCurrentTurn ? 4 : 1);
         opponentAvatarRight.value = withTiming(opponentIsCurrentTurn ? -24 : -21);
     }, [playerIsCurrentTurn, opponentIsCurrentTurn]);
+
+    const opponentAvatarRightStyle = useAnimatedStyle(() => {
+        return {
+            right: opponentAvatarRight.value
+        }
+    });
 
     return (
         <View style={styles.container}>
@@ -75,14 +81,13 @@ const Scores = ({ playerIsCurrentTurn, opponentIsCurrentTurn, playerScore, oppon
             {/* END Opponent Score */}
             {/* Opponent Avatar */}
             <Animated.View
-                style={{
+                style={[{
                     position: 'absolute',
-                    right: opponentAvatarRight,
                     zIndex: 99,
                     borderRadius: 99,
                     borderWidth: opponentAvatarBorderWidth,
                     borderColor: 'rgba(0,0,0,0.3)',
-                }}
+                }, opponentAvatarRightStyle]}
             >
                 <Image
                     source={{ uri: "https://as1.ftcdn.net/v2/jpg/02/31/19/64/1000_F_231196474_IT7zKhOFyJCqEJr3b9huL4W0ODVWsZd0.jpg" }}

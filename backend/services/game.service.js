@@ -59,19 +59,19 @@ const CHOICES_INIT = {
 };
 
 const ALL_COMBINATIONS = [
+    { value: 'Yam', id: 'yam' },
+    { value: 'Sec', id: 'sec' },
+    { value: 'Défi', id: 'defi' },
+    { value: 'Full', id: 'full' },
+    { value: 'Carré', id: 'carre' },
+    { value: 'Suite', id: 'suite' },
     { value: 'Brelan1', id: 'brelan1' },
     { value: 'Brelan2', id: 'brelan2' },
     { value: 'Brelan3', id: 'brelan3' },
     { value: 'Brelan4', id: 'brelan4' },
     { value: 'Brelan5', id: 'brelan5' },
     { value: 'Brelan6', id: 'brelan6' },
-    { value: 'Full', id: 'full' },
-    { value: 'Carré', id: 'carre' },
-    { value: 'Yam', id: 'yam' },
-    { value: 'Suite', id: 'suite' },
     { value: '≤8', id: 'moinshuit' },
-    { value: 'Sec', id: 'sec' },
-    { value: 'Défi', id: 'defi' }
 ];
 
 const GAME_INIT = {
@@ -112,6 +112,9 @@ const GameService = {
         },
         grid: () => {
             return [...GRID_INIT];
+        },
+        combinations: () => {
+            return [...ALL_COMBINATIONS];
         }
     },
     send: {
@@ -323,7 +326,7 @@ const GameService = {
             const updatedGrid = grid.map(row =>
                 row.map(cell => ({
                     ...cell,
-                    canBeChecked: true
+                    canBeChecked: false
                 }))
             );
             return updatedGrid;
@@ -492,6 +495,17 @@ const GameService = {
         },
         allEquals: (array) => {
             return array.every(val => val === array[0]);
+        },
+        getFreeCombinations: (game) => {
+            const freeCases = [];
+            for (let i = 0; i < game.gameState.grid.length; i++) {
+                for (let j = 0; j < game.gameState.grid[i].length; j++) {
+                    if (game.gameState.grid[i][j].owner === null) {
+                        freeCases.push(game.gameState.grid[i][j].id);
+                    }
+                }
+            }
+            return [...ALL_COMBINATIONS].filter(combination => freeCases.includes(combination.id));
         }
     }
 }
