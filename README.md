@@ -1,35 +1,57 @@
-# Socket IO Example
+# Bonjour Julien! 👋
 
-<p>
-  <!-- iOS -->
-  <a href="https://itunes.apple.com/app/apple-store/id982107779">
-    <img alt="Supports Expo iOS" longdesc="Supports Expo iOS" src="https://img.shields.io/badge/iOS-4630EB.svg?style=flat-square&logo=APPLE&labelColor=999999&logoColor=fff" />
-  </a>
-  <!-- Android -->
-  <a href="https://play.google.com/store/apps/details?id=host.exp.exponent&referrer=blankexample">
-    <img alt="Supports Expo Android" longdesc="Supports Expo Android" src="https://img.shields.io/badge/Android-4630EB.svg?style=flat-square&logo=ANDROID&labelColor=A4C639&logoColor=fff" />
-  </a>
-  <!-- Web -->
-  <a href="https://docs.expo.dev/workflow/web/">
-    <img alt="Supports Expo Web" longdesc="Supports Expo Web" src="https://img.shields.io/badge/web-4630EB.svg?style=flat-square&logo=GOOGLE-CHROME&labelColor=4285F4&logoColor=fff" />
-  </a>
-</p>
+Voici notre rendu de projet YamMaster. Nous sommes Maxime BAUDOIN et Antonin SIMON, et nous avons développé ce projet à deux.
+Nous avons réalisé la majeure partie du projet chacun de notre côté, et nous avons finalement rassemblé notre travail sur ce repo ! 🌟
 
-This example shows how to connect and interact with socket-io backends.
+## 📁 Contenu du Repo
 
-## 🚀 How to use
+### 1. `APPLICATION MOBILE` 🛠️
 
-### Running the app
+L'application mobile est développée en React Native, tout son contenu se trouve dans ce repository.
+Pour la tester, tu peux suivre les étapes suivantes :
 
-- Run `yarn` or `npm install`
-- Open `App.js` and change the `socketEndpoint` at the top of the file to point to your endpoint.
-- Open `app` with `yarn start` or `npm run start` to try it out.
+1. Posséder une version stable et à jour de [Node.js](https://nodejs.org/)
+2. Cloner le projet avec la commande `git clone https://github.com/maximebaudoin/YamMaster.git`
+3. Se placer dans le dossier du projet `cd YamMaster`
+4. Installer les paquets avec la commande `npm install`
+5. Lancer le serveur Expo avec `npx expo start`
+6. (Optionnel) Pour une meilleure expérience mobile, il peut être intéressant de passer par l'application mobile [Expo](https://expo.io/), parfaite pour tester cette application ! ✨
 
-### Running the server
 
-- `cd` into the `backend` directory and run `yarn` or `npm install`, then run `yarn start` or `npm run start`
-- Install [ngrok](https://ngrok.com/download) and run `ngrok http 3000` and copy the https url that looks something like this `https://f7333e87.ngrok.io`.
+### 2. `SERVEUR WEB SOCKET` 🚀
 
-## 📝 Notes
+Le serveur web socket se trouve dans le dossier `backend` 📁
 
-React Native provides a socket-io compatible WebSocket implementation, some people get tripped up on the https requirement so this example helps to clarify how you can get it running.
+Voici les étapes à suivre pour le mettre en route :
+
+1. Se rendre dans le dossier du serveur `cd backend/`
+2. Installer les paquets avec la commande `npm install`
+3. Lancer le serveur avec la commande `npm start`
+
+
+### 3. `API` 🌐
+
+Pour accompagner cela, nous avons décidé de monter un serveur Next.js et d'y héberger une API. 👀
+L'API est utilisée pour gérer l'authentification des utilisateurs et sauvegarder les parties jouées. 🙌
+Cette partie ne faisant pas l'objet de ce module, nous n'avons pas mis en place de politiques de sécurité. Notre base de données ne contient pas de données sensibles, il s'agit d'un serveur et d'une base de données de développement uniquement.
+
+Nous avons utilisé une base de données en NoSQL avec [MongoDB](https://www.mongodb.com/fr-fr) et développé une API en Next.JS (https://nextjs.org).
+
+Tu peux retrouver notre travail [🔗 ici](https://github.com/antonin187/YamMasterAPI.git)
+
+Pour lancer le projet, il est important de suivre ces étapes :
+
+1. Cloner le projet avec la commande `git clone https://github.com/antonin187/YamMasterAPI.git`
+2. Se rendre dans le dossier du projet `cd YamMasterAPI/`
+3. Installer les packages NodeJS via la commande `npm install`
+4. Lancer le serveur avec la commande `npm run dev`
+
+Pour une meilleure utilisation, nous avons hébergé notre API grâce à Vercel !
+
+La documentation est disponible à l'URL : [🔗 https://yam-master-api.vercel.app/api/doc](https://yam-master-api.vercel.app/api/doc)
+
+## Remerciements 🙏
+
+Merci, Julien, pour avoir pris le temps de te plonger dans notre travail. Le module était super intéressant, d'autant plus que le JS est un langage que nous affectionnons tout particulièrement.
+
+Merci encore! 🤝
