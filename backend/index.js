@@ -56,8 +56,8 @@ const updateClientsViewScores = (game) => {
 }
 
 const updateClientsViewEndGame = (game) => {
-    game.player1Socket.emit('game.end', GameService.send.forPlayer.gameEndState('player:1', game.gameState));
-    !game.isVsBotGame && game.player2Socket.emit('game.end', GameService.send.forPlayer.gameEndState('player:2', game.gameState));
+    game.player1Socket.emit('game.end', GameService.send.forPlayer.gameEndState('player:1', game));
+    !game.isVsBotGame && game.player2Socket.emit('game.end', GameService.send.forPlayer.gameEndState('player:2', game));
 }
 
 const newPlayerInQueue = (socket) => {
