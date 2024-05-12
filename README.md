@@ -48,7 +48,7 @@ Pour lancer le projet, il est important de suivre ces étapes :
 
 Pour une meilleure utilisation, nous avons hébergé notre API grâce à Vercel !
 
-La documentation est disponible à l'URL : [🔗 https://yam-master-api.vercel.app/api/doc](https://yam-master-api.vercel.app/api/doc)
+La documentation est disponible à l'URL : [🔗 https://yam-master-api.vercel.app/swagger](https://yam-master-api.vercel.app/swagger)
 
 ## Remerciements 🙏
 
