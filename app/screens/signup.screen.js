@@ -107,7 +107,7 @@ export default function SignupScreen() {
               fontWeight: "bold",
               fontSize: 13,
               marginBottom: 10,
-              opacity: `${!isValidPassword ? 1 : 0}`,
+              opacity: !isValidPassword ? 1 : 0,
               textAlign: "center"
             }}
           >
