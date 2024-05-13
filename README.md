@@ -16,7 +16,7 @@ Pour la tester, tu peux suivre les étapes suivantes :
 4. Installer les paquets avec la commande `npm install`
 5. Lancer le serveur Expo avec `npx expo start`
 6. (Optionnel) Pour une meilleure expérience mobile, il peut être intéressant de passer par l'application mobile [Expo](https://expo.io/), parfaite pour tester cette application ! ✨
-
+7. ⚠️ Modifier le fichier `app/contexts/socket.context.js` en modifiant l'adresse IP par votre IP locale, cela permet à l'application de se connecter avec le backend sur un autre appareil dans le même réseau local
 
 ### 2. `SERVEUR WEB SOCKET` 🚀
 
